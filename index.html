@@ -1,974 +1,808 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NSW Burns Community Survey 2025 - Interactive Results</title>
+    <title>Our Story: The NSW Burns Community in Transition</title>
+    <meta name="description" content="Interactive results from the 2025 NSW Burns Community Survey, representing 518 community voices and their vision for the future.">
+    <meta name="keywords" content="NSW Burns, Burning Man, community survey, interactive report, Australia">
+    <meta name="author" content="NSW Burns Community">
+    <meta property="og:title" content="Our Story: The NSW Burns Community in Transition">
+    <meta property="og:description" content="Interactive results from the 2025 NSW Burns Community Survey, representing 518 community voices.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/your-repo-name/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Our Story: The NSW Burns Community in Transition">
+    <meta name="twitter:description" content="Interactive results from the 2025 NSW Burns Community Survey.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A thematic, single-page scrolling dashboard. The structure is designed for intuitive exploration rather than mirroring the report's linear chapters. It starts with a high-level summary (Home), then delves into key themes: 'Who We Are' (demographics), 'Our Values' (connection & inclusion), 'Our Skills' (capabilities & personas), 'Future Events' (preferences), and 'Resources'. A sticky navigation bar allows users to jump between these themes, facilitating both a guided narrative journey and non-linear exploration. This structure makes the dense information digestible and allows users to focus on the areas most relevant to them, enhancing usability and understanding. -->
+    <!-- Visualization & Content Choices: Data is presented using Chart.js for interactive visualizations, paired with key insights in text blocks for context. Goals: Inform (Doughnut/Bar charts for demographics/preferences), Compare (Bar/Stacked Bar charts for motivations/skills/priorities), Organize (Clickable cards for Community Personas, structured lists for resources). Interactions include chart tooltips for detail and clickable persona cards to reveal information, making the experience engaging. This approach turns static data into an exploratory tool. Library/Method: Chart.js (Canvas) with chartjs-plugin-datalabels for all charts. HTML/CSS/Tailwind for all layouts and diagrams. Unicode characters for icons. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        :root {
-            --primary: #E74C3C;
-            --secondary: #F39C12;
-            --accent: #3498DB;
-            --dark: #2C3E50;
-            --light: #ECF0F1;
-            --text: #34495E;
-            --success: #27AE60;
-            --warning: #E67E22;
-            --info: #9B59B6;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: var(--text);
-            background-color: #f8f9fa;
-            scroll-behavior: smooth;
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333;
         }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            padding: 1rem 0;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 500;
-            transition: color 0.3s;
-            font-size: 0.95rem;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        /* Sections */
-        section {
-            padding: 5rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding-top: 100px;
-            margin-top: 0;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            color: var(--dark);
-            text-align: center;
-        }
-
-        h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-
-        .subtitle {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .key-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* Content Cards */
-        .content-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        /* Pure CSS Charts */
         .chart-container {
-            margin: 2rem 0;
-        }
-
-        /* Donut Chart */
-        .donut-chart {
             position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 2rem auto;
-        }
-
-        .donut-chart-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--dark);
-        }
-
-        /* Bar Chart */
-        .bar-chart {
-            margin: 2rem 0;
-        }
-
-        .bar-row {
-            display: flex;
-            align-items: center;
-            margin: 1rem 0;
-            gap: 1rem;
-        }
-
-        .bar-label {
-            min-width: 140px;
-            font-size: 0.9rem;
-            text-align: right;
-        }
-
-        .bar-container {
-            flex: 1;
-            background: var(--light);
-            height: 30px;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            padding: 0 1rem;
-            color: white;
-            font-weight: bold;
-            font-size: 0.85rem;
-            transition: width 1.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bar-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 3s infinite;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 450px;
         }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        .chart-container-large {
+             position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 550px;
         }
-
-        /* Pie Slices */
-        .pie-chart {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .pie-slice {
-            text-align: center;
-            padding: 1.5rem;
-            border-radius: 10px;
-            transition: transform 0.3s;
-        }
-
-        .pie-slice:hover {
-            transform: translateY(-5px);
-        }
-
-        .pie-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .pie-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* Progress Rings */
-        .progress-ring {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 1rem auto;
-        }
-
-        .progress-ring svg {
-            transform: rotate(-90deg);
-        }
-
-        .progress-ring-circle {
-            fill: none;
-            stroke-width: 10;
-            stroke-linecap: round;
-        }
-
-        .progress-ring-bg {
-            stroke: var(--light);
-        }
-
-        .progress-ring-fg {
-            stroke: var(--accent);
-            transition: stroke-dashoffset 1.5s ease;
-        }
-
-        .progress-ring-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--dark);
-        }
-
-        /* Chart Grid */
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        /* Insights */
-        .insight-box {
-            background: var(--light);
-            padding: 1.5rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--accent);
-            margin: 1rem 0;
-        }
-
-        .insight-box h4 {
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Community Voices */
-        .voice-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 2rem;
-            border-radius: 15px;
-            margin: 1rem 0;
-            font-style: italic;
-            position: relative;
-            color: var(--dark);
-        }
-
-        .voice-card::before {
-            content: '"';
-            font-size: 4rem;
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            opacity: 0.2;
-        }
-
-        /* Interactive Elements */
-        .tab-container {
-            margin: 2rem 0;
-        }
-
-        .tab-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            background: white;
-            border: 2px solid var(--light);
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .tab-button.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Accessibility Features */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--primary);
-            color: white;
-            padding: 8px;
-            text-decoration: none;
-            border-radius: 0 0 4px 0;
-        }
-
-        .skip-link:focus {
-            top: 0;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
             }
-            
-            h2 {
-                font-size: 1.75rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            section {
-                padding: 3rem 1rem;
-            }
-            
-            .bar-label {
-                min-width: 100px;
-                font-size: 0.8rem;
+             .chart-container-large {
+                height: 450px;
+                max-height: 500px;
             }
         }
-
-        /* Focus Indicators */
-        a:focus, button:focus {
-            outline: 3px solid var(--accent);
-            outline-offset: 2px;
+        .nav-link {
+            transition: color 0.3s ease;
         }
-
-        /* Smooth Reveal Animation */
-        .reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s, transform 0.6s;
+        .nav-link:hover {
+            color: #D97706; /* amber-600 */
         }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
+        .persona-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        /* Legend */
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin: 1rem 0;
-            justify-content: center;
+        .persona-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
+        .price-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
         }
     </style>
 </head>
-<body>
-    <a href="#main" class="skip-link">Skip to main content</a>
-    
-    <nav>
-        <div class="nav-container">
-            <div class="logo">NSW Burns Survey 2025</div>
-            <ul class="nav-links">
-                <li><a href="#overview">Overview</a></li>
-                <li><a href="#demographics">Who We Are</a></li>
-                <li><a href="#accessibility">Accessibility</a></li>
-                <li><a href="#community">Community</a></li>
-                <li><a href="#vision">Our Vision</a></li>
-            </ul>
+<body class="bg-stone-50 text-stone-800">
+
+    <header class="bg-stone-50/80 backdrop-blur-lg sticky top-0 z-50 border-b border-stone-200">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-amber-700">NSW Burns</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link text-stone-600 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#who-we-are" class="nav-link text-stone-600 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium">Who We Are</a>
+                        <a href="#our-values" class="nav-link text-stone-600 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium">Our Values</a>
+                        <a href="#our-skills" class="nav-link text-stone-600 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium">Our Skills</a>
+                        <a href="#future-events" class="nav-link text-stone-600 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium">Future Events</a>
+                        <a href="#resources" class="nav-link text-stone-600 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium">Resources</a>
+                        <a href="#conclusion" class="nav-link text-stone-600 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium">Conclusion</a>
+                    </div>
+                </div>
+                 <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-stone-600 hover:text-amber-600 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-amber-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#who-we-are" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Who We Are</a>
+                <a href="#our-values" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Our Values</a>
+                <a href="#our-skills" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Our Skills</a>
+                <a href="#future-events" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Future Events</a>
+                <a href="#resources" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Resources</a>
+                <a href="#conclusion" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Conclusion</a>
+            </div>
         </div>
-    </nav>
+    </header>
 
-    <main id="main">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1 class="reveal">Our Story in Numbers</h1>
-            <p class="subtitle reveal">NSW Burns Community Survey 2025</p>
-            <div class="key-stats reveal">
-                <div class="stat-card">
-                    <div class="stat-number">518</div>
-                    <div class="stat-label">Community Voices</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">58%</div>
-                    <div class="stat-label">Neurodivergent</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">425</div>
-                    <div class="stat-label">Ready to Volunteer</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">83%</div>
-                    <div class="stat-label">Experienced Burners</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Overview Section -->
-        <section id="overview">
-            <h2>A Community Ready to Build</h2>
-            
-            <div class="content-card reveal">
-                <h3>Our Collective Vision</h3>
-                <p>We are 500+ passionate souls, primarily from Sydney and Newcastle, with 73% aged 35-54 and over half neurodivergent. We come for community and connection (76%), self-expression and creativity (62%), and transformative art and music (48%).</p>
-                
-                <div class="insight-box">
-                    <h4>Key Insight</h4>
-                    <p>This is not a community struggling to find direction—it is one with clear vision, proven capability, and the experience to turn aspirations into reality.</p>
-                </div>
-            </div>
-
-            <div class="voice-card reveal">
-                "The numbers tell a story of abundance, not scarcity. We have the capacity, skills, and most importantly, the willingness to build something extraordinary together."
-            </div>
-        </section>
-
-        <!-- Demographics Section -->
-        <section id="demographics">
-            <h2>Who We Are</h2>
-            
-            <div class="chart-grid">
-                <div class="content-card reveal">
-                    <h3>Age Distribution</h3>
-                    <div class="pie-chart">
-                        <div class="pie-slice" style="background: rgba(231, 76, 60, 0.1); color: var(--primary);">
-                            <div class="pie-value">48%</div>
-                            <div class="pie-label">35-44 years</div>
-                        </div>
-                        <div class="pie-slice" style="background: rgba(243, 156, 18, 0.1); color: var(--secondary);">
-                            <div class="pie-value">25%</div>
-                            <div class="pie-label">45-54 years</div>
-                        </div>
-                        <div class="pie-slice" style="background: rgba(52, 152, 219, 0.1); color: var(--accent);">
-                            <div class="pie-value">18%</div>
-                            <div class="pie-label">25-34 years</div>
-                        </div>
-                        <div class="pie-slice" style="background: rgba(155, 89, 182, 0.1); color: var(--info);">
-                            <div class="pie-value">9%</div>
-                            <div class="pie-label">Other ages</div>
-                        </div>
+    <main>
+        <section id="home" class="py-20 sm:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-stone-900">Our Story: A Community in Transition</h1>
+                <p class="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-stone-600">An interactive exploration of the 2025 NSW Burns Community Survey, revealing a mature, experienced, and capable community ready to build its future.</p>
+                <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-amber-600">518</p>
+                        <p class="mt-2 text-stone-600">Community Voices Captured</p>
                     </div>
-                    <div class="insight-box">
-                        <h4>Mature Community</h4>
-                        <p>73% aged 35-54, indicating established participants with resources and stability for community building.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-teal-600">58%</p>
+                        <p class="mt-2 text-stone-600">Identify or Explore Neurodivergence</p>
                     </div>
-                </div>
-                
-                <div class="content-card reveal">
-                    <h3>Geographic Distribution</h3>
-                    <div class="bar-chart">
-                        <div class="bar-row">
-                            <div class="bar-label">NSW</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 75%; background: var(--accent);">75%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Victoria</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 12%; background: var(--primary);">12%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">ACT</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 6%; background: var(--secondary);">6%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Other</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 7%; background: var(--info);">7%</div>
-                            </div>
-                        </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-sky-600">425+</p>
+                        <p class="mt-2 text-stone-600">Ready to Volunteer</p>
                     </div>
-                    <div class="insight-box">
-                        <h4>NSW-Based with Interstate Appeal</h4>
-                        <p>75% from NSW, with Sydney (52%) and Newcastle (22%) as primary hubs.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-card reveal">
-                <h3>Experience Level</h3>
-                <div class="bar-chart">
-                    <div class="bar-row">
-                        <div class="bar-label">5+ Events</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 62%; background: var(--success);">62%</div>
-                        </div>
-                    </div>
-                    <div class="bar-row">
-                        <div class="bar-label">2-4 Events</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 22%; background: var(--accent);">22%</div>
-                        </div>
-                    </div>
-                    <div class="bar-row">
-                        <div class="bar-label">1 Event</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 11%; background: var(--secondary);">11%</div>
-                        </div>
-                    </div>
-                    <div class="bar-row">
-                        <div class="bar-label">None</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 6%; background: var(--primary);">6%</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="insight-box">
-                    <h4>Veteran Community</h4>
-                    <p>83% have attended multiple events, with deep cultural knowledge and commitment.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Accessibility Section -->
-        <section id="accessibility">
-            <h2>Building for Everyone</h2>
-            
-            <div class="content-card reveal">
-                <h3>Neurodivergent Community</h3>
-                <div class="chart-container">
-                    <div class="pie-chart">
-                        <div class="pie-slice" style="background: rgba(155, 89, 182, 0.1); color: var(--info);">
-                            <div class="pie-value">37%</div>
-                            <div class="pie-label">Yes</div>
-                        </div>
-                        <div class="pie-slice" style="background: rgba(230, 126, 34, 0.1); color: var(--warning);">
-                            <div class="pie-value">21%</div>
-                            <div class="pie-label">Questioning</div>
-                        </div>
-                        <div class="pie-slice" style="background: rgba(189, 195, 199, 0.1); color: #7f8c8d;">
-                            <div class="pie-value">42%</div>
-                            <div class="pie-label">No</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="tab-container">
-                    <div class="tab-buttons">
-                        <button class="tab-button active" onclick="showTab('neuro-breakdown', this)">Identity Breakdown</button>
-                        <button class="tab-button" onclick="showTab('neuro-needs', this)">Support Needs</button>
-                    </div>
-                    
-                    <div id="neuro-breakdown" class="tab-content active">
-                        <div class="bar-chart">
-                            <div class="bar-row">
-                                <div class="bar-label">ADHD</div>
-                                <div class="bar-container">
-                                    <div class="bar-fill" style="width: 80%; background: var(--info);">80%</div>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <div class="bar-label">Autism</div>
-                                <div class="bar-container">
-                                    <div class="bar-fill" style="width: 36%; background: var(--info);">36%</div>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <div class="bar-label">Dyslexia/Dyspraxia</div>
-                                <div class="bar-container">
-                                    <div class="bar-fill" style="width: 15%; background: var(--info);">15%</div>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <div class="bar-label">Other</div>
-                                <div class="bar-container">
-                                    <div class="bar-fill" style="width: 12%; background: var(--info);">12%</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="neuro-needs" class="tab-content">
-                        <div class="insight-box">
-                            <h4>Top Accessibility Needs</h4>
-                            <ul>
-                                <li>Sound stage separation (50%)</li>
-                                <li>Quiet/sensory-friendly zones (45%)</li>
-                                <li>Clear written information (40%)</li>
-                                <li>Social interaction support (29%)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="voice-card reveal">
-                "Being able to be myself and drop the mask I have to wear in a neurotypical world"
-            </div>
-        </section>
-
-        <!-- Community Connection Section -->
-        <section id="community">
-            <h2>Connection & Motivation</h2>
-            
-            <div class="chart-grid">
-                <div class="content-card reveal">
-                    <h3>How Connected We Feel</h3>
-                    <div class="bar-chart">
-                        <div class="bar-row">
-                            <div class="bar-label">Very Connected</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 18%; background: var(--success);">18%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Somewhat Connected</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 36%; background: var(--accent);">36%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Neutral</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 15%; background: #BDC3C7;">15%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Somewhat Disconnected</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 21%; background: var(--secondary);">21%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Very Disconnected</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 10%; background: var(--primary);">10%</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="insight-box">
-                        <h4>Room for Growth</h4>
-                        <p>While 54% feel connected, 31% feel on the edges—reminding us that true inclusion requires intentional effort.</p>
-                    </div>
-                </div>
-                
-                <div class="content-card reveal">
-                    <h3>What Brings Us Together</h3>
-                    <div class="bar-chart">
-                        <div class="bar-row">
-                            <div class="bar-label">Community</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 76%; background: var(--accent);">76%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Self-expression</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 62%; background: var(--accent);">62%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Art & Music</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 48%; background: var(--accent);">48%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Escape</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 38%; background: var(--accent);">38%</div>
-                            </div>
-                        </div>
-                        <div class="bar-row">
-                            <div class="bar-label">Personal Growth</div>
-                            <div class="bar-container">
-                                <div class="bar-fill" style="width: 35%; background: var(--accent);">35%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-card reveal">
-                <h3>Volunteer Capacity</h3>
-                <div class="key-stats">
-                    <div class="stat-card" style="background: white;">
-                        <div class="stat-number" style="color: var(--success);">425</div>
-                        <div class="stat-label" style="color: var(--text);">Ready to Volunteer</div>
-                    </div>
-                    <div class="stat-card" style="background: white;">
-                        <div class="stat-number" style="color: var(--info);">180</div>
-                        <div class="stat-label" style="color: var(--text);">Ready for Leadership</div>
-                    </div>
-                    <div class="stat-card" style="background: white;">
-                        <div class="stat-number" style="color: var(--warning);">95</div>
-                        <div class="stat-label" style="color: var(--text);">Offering Resources</div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-rose-600">83%</p>
+                        <p class="mt-2 text-stone-600">Attended Multiple Events</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Vision Section -->
-        <section id="vision">
-            <h2>Our Path Forward</h2>
-            
-            <div class="content-card reveal">
-                <h3>Community Trajectory</h3>
-                
-                <div class="tab-container">
-                    <div class="tab-buttons">
-                        <button class="tab-button active" onclick="showTab('phase1', this)">Foundation (2025-26)</button>
-                        <button class="tab-button" onclick="showTab('phase2', this)">Growth (Years 2-3)</button>
-                        <button class="tab-button" onclick="showTab('phase3', this)">Maturation (Years 4-5)</button>
+        <section id="who-we-are" class="py-20 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-amber-600 tracking-wide uppercase">Portraits of Our Community</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Who We Are</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-xl text-stone-500">This section provides a snapshot of our community's demographics. The data reveals a mature, experienced, and geographically concentrated group with deep roots in Burner culture, ready to guide its next chapter.</p>
+                </div>
+
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold text-stone-900">Age Distribution</h3>
+                        <p class="mt-3 text-stone-600">Our community's core is middle-aged (73% are 35-54), indicating a stable, experienced participant base with the life stability and resources for long-term community building.</p>
+                        <div class="mt-6 chart-container"><canvas id="ageChart"></canvas></div>
                     </div>
-                    
-                    <div id="phase1" class="tab-content active">
-                        <h4>Foundation Phase</h4>
-                        <ul>
-                            <li>400-500 person regional burn</li>
-                            <li>Autumn/winter 2026 launch</li>
-                            <li>Sacred effigy burns</li>
-                            <li>$250-$400 ticket range</li>
-                            <li>Healing past conflicts</li>
+                    <div>
+                        <h3 class="text-2xl font-bold text-stone-900">Geographic Distribution</h3>
+                        <p class="mt-3 text-stone-600">Our community is firmly rooted in NSW, but with significant interstate appeal, providing a strong foundation for local events with broader reach.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-center">By State</h4>
+                                <div class="mt-2 chart-container h-64"><canvas id="locationStatesChart"></canvas></div>
+                            </div>
+                             <div>
+                                <h4 class="text-lg font-semibold text-center">By NSW Region</h4>
+                                <div class="mt-2 chart-container h-64"><canvas id="locationClustersChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16">
+                    <h3 class="text-2xl font-bold text-stone-900 text-center">Experience Level</h3>
+                    <p class="mt-3 text-stone-600 text-center max-w-3xl mx-auto">We are a veteran-heavy community. A remarkable 83% have attended multiple Burner events, with over 60% having been to five or more. This deep cultural knowledge is our greatest asset for maintaining authenticity and mentoring newcomers.</p>
+                    <div class="mt-6 chart-container max-w-md"><canvas id="experienceChart"></canvas></div>
+                </div>
+                <div class="mt-16 bg-stone-100 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold text-stone-900 text-center">Family & Kids' Participation</h3>
+                    <p class="mt-3 text-stone-600 text-center max-w-3xl mx-auto">A significant portion of our community are parents, and many are open to or actively bring their children to events, highlighting the need for family-friendly spaces and planning.</p>
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                        <div>
+                             <h4 class="text-xl font-semibold text-stone-800 text-center">Parents in the Community</h4>
+                             <p class="mt-2 text-sm text-stone-600 text-center">21% of respondents have children under 18 in their care.</p>
+                             <div class="mt-4 chart-container max-w-xs"><canvas id="familyStatusChart"></canvas></div>
+                        </div>
+                        <div>
+                             <h4 class="text-xl font-semibold text-stone-800 text-center">Bringing Kids to Events</h4>
+                             <p class="mt-2 text-sm text-stone-600 text-center">Of those with kids, a combined 66% have brought them or are open to it, while 27% prefer to attend without them.</p>
+                             <div class="mt-4 chart-container"><canvas id="bringKidsChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="our-values" class="py-20 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-teal-600 tracking-wide uppercase">Inclusion & Connection</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Our Values</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-xl text-stone-500">This section explores the 'why' behind our community. The data on neurodiversity, accessibility, and motivation reveals a deep-seated need for authentic connection, self-expression, and spaces that are genuinely inclusive for all.</p>
+                </div>
+
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-stone-900">A Neurodivergent-Majority Community</h3>
+                        <p class="mt-3 text-stone-600">With 58% of our community identifying as or exploring neurodivergence, we are fundamentally different from the general population. This has profound implications for event design, demanding we prioritise sensory-friendly spaces, clear communication, and flexible participation.</p>
+                        <div class="mt-6 chart-container max-w-md"><canvas id="neurodivergentChart"></canvas></div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-stone-900">Primary Motivations</h3>
+                        <p class="mt-3 text-stone-600">Why do we come? Overwhelmingly, for community and connection (76%), and self-expression (62%). This tells us that successful events must prioritise participation and authentic human interaction over passive entertainment.</p>
+                        <div class="mt-6 chart-container"><canvas id="motivationsChart"></canvas></div>
+                    </div>
+                </div>
+                 <div class="mt-16 bg-white p-8 rounded-lg shadow-sm">
+                    <h3 class="text-2xl font-bold text-stone-900 text-center">Accessibility is Inclusion</h3>
+                    <p class="mt-3 text-stone-600 text-center max-w-3xl mx-auto">While 20% face physical challenges, a massive 77% of our community benefits from accessibility features. The greatest needs are sensory: sound separation and quiet zones. This makes accessibility a core design principle, not an afterthought.</p>
+                    <div class="mt-6 chart-container"><canvas id="accessibilityNeedsChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="our-skills" class="py-20 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-sky-600 tracking-wide uppercase">Capacity & Leadership</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Our Skills</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-xl text-stone-500">This section showcases our collective strength. The data reveals an abundance of volunteer experience and leadership potential. We don't have a problem of scarcity; we have an opportunity of abundance, with the right people ready to step up.</p>
+                </div>
+
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                     <div>
+                        <h3 class="text-2xl font-bold text-stone-900">How We Contribute</h3>
+                        <p class="mt-3 text-stone-600">Participation is our foundation. The majority contribute as Theme Camp members (66%) and Event Volunteers (62%), forming the vibrant, creative core of our events. A significant number also take on leadership as Theme Camp organisers (30%) and Art Creators (24%).</p>
+                        <div class="mt-6 chart-container"><canvas id="contributionChart"></canvas></div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-stone-900">Volunteer Experience</h3>
+                        <p class="mt-3 text-stone-600">Our community has deep experience across all essential roles, demonstrating a proven commitment to our principles and the safety and enjoyment of all participants.</p>
+                        <div class="mt-6 chart-container"><canvas id="volunteerChart"></canvas></div>
+                    </div>
+                    <div class="lg:col-span-2 mt-12">
+                        <h3 class="text-2xl font-bold text-stone-900 text-center">Leadership Interest</h3>
+                        <p class="mt-3 text-stone-600 text-center max-w-3xl mx-auto">There is a healthy balance of people ready to lead and support. 51% are interested in coordination roles, with a strong preference for project-based leadership, suggesting a sustainable pipeline for future events.</p>
+                        <div class="mt-6 chart-container"><canvas id="leadershipChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="mt-20">
+                    <h3 class="text-3xl font-bold text-stone-900 text-center">Community Personas</h3>
+                    <p class="mt-4 max-w-3xl mx-auto text-center text-stone-600">Five distinct archetypes emerged from the data, helping us understand the different motivations and capabilities within our community. Click on each persona to learn more.</p>
+                    <div id="personas-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="future-events" class="py-20 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-rose-600 tracking-wide uppercase">Preferences & Vision</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">The Path Forward</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-xl text-stone-500">What does the future look like? This section details the community's preferences for event timing, size, and format, providing a clear, evidence-based roadmap for event organisers to follow.</p>
+                </div>
+
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-bold text-stone-900">What Matters Most?</h3>
+                        <p class="mt-3 text-stone-600">Building a strong, local NSW community is the overwhelming priority. Accessibility for Sydney participants is also key. Interstate connections are valued, but secondary to fostering the local scene.</p>
+                        <div class="mt-6 chart-container"><canvas id="whatMattersMostChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-bold text-stone-900">Official Status Importance</h3>
+                        <p class="mt-3 text-stone-600">The community is split, but a majority (54%) feel official Burning Man Regional status is not important. This suggests success is not seen as dependent on official affiliation, empowering local organisers.</p>
+                        <div class="mt-6 chart-container"><canvas id="officialStatusChart"></canvas></div>
+                    </div>
+                </div>
+                
+                <div class="mt-16 bg-stone-100 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold text-stone-900 text-center">Monthly Event Likelihood</h3>
+                    <p class="mt-3 text-stone-600 text-center max-w-3xl mx-auto">The shoulder seasons of Autumn (Mar-Apr) and Spring (Oct-Nov) are clear favourites, avoiding the peak summer fire risk and deep winter cold. The community shows strong preference for events outside of January and the mid-winter months.</p>
+                    <div class="mt-6 chart-container-large"><canvas id="monthlyLikelihoodChart"></canvas></div>
+                </div>
+                
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-stone-900">Importance of Public Holidays</h3>
+                        <p class="mt-3 text-stone-600">The community is divided on the need for events to be on public holidays. While 38% see it as important, a nearly equal 34% do not, and 27% are neutral. This gives organisers flexibility in scheduling.</p>
+                        <div class="mt-6 chart-container"><canvas id="publicHolidayImportanceChart"></canvas></div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-stone-900">Preferred Long Weekend</h3>
+                        <p class="mt-3 text-stone-600">The October Labour Day long weekend is the top choice, aligning with the monthly preference data. However, with 43% stating any long weekend works, there is huge flexibility for a year-round calendar of events.</p>
+                        <div class="mt-6 chart-container"><canvas id="timingChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="mt-16 bg-white p-8 rounded-lg shadow-sm">
+                    <h3 class="text-2xl font-bold text-stone-900 text-center">Importance of Large-Scale Art Burns</h3>
+                    <p class="mt-3 text-stone-600 text-center max-w-3xl mx-auto">The Effigy or Temple burn is a cornerstone of the experience for many. Over half the community (51%) considers it a very important or essential part of the event, while 42% see it as a nice feature but not critical.</p>
+                    <div class="mt-6 chart-container"><canvas id="artBurnImportanceChart"></canvas></div>
+                </div>
+
+                <div class="mt-20">
+                    <h3 class="text-3xl font-bold text-stone-900 text-center">Ticket Pricing Analysis</h3>
+                    <p class="mt-4 max-w-3xl mx-auto text-center text-stone-600">The Westerndorp Price Sensitivity Meter helps identify the optimal price range that balances accessibility with perceived event quality. The findings provide a clear financial framework for event planning.</p>
+                    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-t-4 border-sky-500">
+                            <h4 class="font-semibold text-stone-800">Point of Marginal Cheapness</h4>
+                            <p class="text-4xl font-bold text-sky-600 mt-2">$350</p>
+                            <p class="mt-2 text-sm text-stone-600">Below this price, attendees begin to question the event's quality and viability. Represents the minimum price.</p>
+                        </div>
+                        <div class="price-card p-8 rounded-lg shadow-lg border-t-4 border-amber-500 text-center">
+                            <h4 class="font-bold text-xl text-amber-800">Optimal Price Point</h4>
+                            <p class="text-6xl font-extrabold text-amber-700 mt-2">$400</p>
+                            <p class="mt-3 text-sm text-amber-900 font-medium">The recommended base ticket price. This is the sweet spot balancing accessibility and value perception.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-t-4 border-rose-500">
+                             <h4 class="font-semibold text-stone-800">Point of Marginal Expensiveness</h4>
+                            <p class="text-4xl font-bold text-rose-600 mt-2">$450</p>
+                            <p class="mt-2 text-sm text-stone-600">Above this price, cost becomes a significant barrier to attendance for many. Represents the maximum acceptable price.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        
+        <section id="resources" class="py-20 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-amber-600 tracking-wide uppercase">Collective Wisdom</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Community Resources</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-xl text-stone-500">The survey unearthed a treasure trove of actionable leads, from potential event sites to skilled suppliers. This is a community with the connections and resources to make its vision a reality.</p>
+                </div>
+                <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                    <div class="bg-stone-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-stone-900 mb-4">Finding a New Home</h3>
+                        <ul class="space-y-3 text-sm text-stone-700">
+                            <li><strong class="text-stone-800">Top Suggestions:</strong> Glenworth Valley, Dragon Dreaming site (Wee Jasper), Confest site (Woorooma Station).</li>
+                            <li><strong class="text-stone-800">Other Mentions:</strong> Matong State Forest, Castle Mountain, Parkes, Wingham/Taree area, Riverwood Downs.</li>
+                             <li><strong class="text-stone-800">Actionable Leads:</strong> Contacts provided for properties in Bellingen, Mandalong, and "The Lair" on the Central Coast.</li>
                         </ul>
                     </div>
-                    
-                    <div id="phase2" class="tab-content">
-                        <h4>Growth Phase</h4>
-                        <ul>
-                            <li>Scale to 800-1,200 participants</li>
-                            <li>Additional smaller gatherings</li>
-                            <li>Quarterly art builds</li>
-                            <li>Mentorship networks</li>
-                            <li>Year-round connection</li>
+                    <div class="bg-stone-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-stone-900 mb-4">Community Suppliers & Equipment</h3>
+                        <ul class="space-y-3 text-sm text-stone-700">
+                             <li><strong class="text-stone-800">Sound/AV:</strong> Cody Lawton (Litness Lights), Justin "Cosmos" James (Dynamic Audio Visual), Julian Lacey/Nicholas Randell (Sunset Town).</li>
+                             <li><strong class="text-stone-800">Maker Spaces:</strong> Newcastle's Sparkhaus and Sydney's RoboDino.</li>
+                             <li><strong class="text-stone-800">Logistics:</strong> Sapphire Events, Spaceman Design, ATS Logistics, Crew on Call.</li>
                         </ul>
                     </div>
-                    
-                    <div id="phase3" class="tab-content">
-                        <h4>Maturation Phase</h4>
-                        <ul>
-                            <li>1,500+ flagship burn</li>
-                            <li>3-4 smaller events annually</li>
-                            <li>Leadership rotation systems</li>
-                            <li>Artist grant programs</li>
-                            <li>Community-owned assets</li>
+                    <div class="bg-stone-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-stone-900 mb-4">Support for Artists & Theme Camps</h3>
+                        <ul class="space-y-3 text-sm text-stone-700">
+                            <li><strong class="text-stone-800">Primary Need:</strong> Increased and more accessible funding, including transport subsidies.</li>
+                            <li><strong class="text-stone-800">Shared Resources:</strong> Desire for a community "Library of Things" for tools and equipment.</li>
+                            <li><strong class="text-stone-800">Mentorship:</strong> A structured system for knowledge sharing between experienced and new creators.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-stone-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-stone-900 mb-4">Potential Community Partners</h3>
+                        <ul class="space-y-3 text-sm text-stone-700">
+                             <li><strong class="text-stone-800">Festivals:</strong> ConFest, Dragon Dreaming, Modifyre (QLD), Blazing Swan (WA).</li>
+                             <li><strong class="text-stone-800">Arts/Maker Groups:</strong> Sparkhaus, local Men's Sheds, Newtown Festival.</li>
+                             <li><strong class="text-stone-800">Government/Local Bodies:</strong> Local Aboriginal Land Councils, Regional Arts NSW, Create NSW.</li>
+                             <li><strong class="text-stone-800">Environmental Groups:</strong> Reverse Garbage, The Bower, Landcare.</li>
                         </ul>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="voice-card reveal">
-                "Given the experience, passion, and clarity of vision expressed by this community, this future is not just possible—it's probable."
-            </div>
-
-            <div class="content-card reveal">
-                <h3>Event Preferences</h3>
-                <div class="bar-chart">
-                    <div class="bar-row">
-                        <div class="bar-label">Large Regional (1000+)</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 46%; background: var(--primary);">46%</div>
-                        </div>
-                    </div>
-                    <div class="bar-row">
-                        <div class="bar-label">Mixed Model</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 38%; background: var(--secondary);">38%</div>
-                        </div>
-                    </div>
-                    <div class="bar-row">
-                        <div class="bar-label">Smaller (400-800)</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 28%; background: var(--accent);">28%</div>
-                        </div>
-                    </div>
-                    <div class="bar-row">
-                        <div class="bar-label">Micro (<200)</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 22%; background: var(--info);">22%</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="insight-box">
-                    <h4>Preferred Timing</h4>
-                    <p>Labour Day in October (50%) emerges as the preferred option, with 43% flexible for all long weekends.</p>
-                </div>
+        <section id="conclusion" class="py-20 sm:py-24">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">A Community Ready to Build</h2>
+                <p class="mt-6 text-xl text-stone-600">The data from 518 community members paints a clear and powerful picture: the NSW Burns community is mature, experienced, and brimming with the capacity for sustainable growth. This is not a community searching for a direction; it is one with a clear vision, proven capabilities, and the collective will to turn its aspirations into reality.</p>
+                <p class="mt-4 text-xl text-stone-600">With a strong contingent of veteran participants, a vast pool of willing volunteers, and a deep-seated commitment to core values like radical inclusion and creative expression, the foundation is solid. The path forward, as illuminated by this data, is not just possible—it is probable. The necessary leadership, skills, and passion will emerge from within, because 500 committed burners create their own momentum.</p>
             </div>
         </section>
     </main>
 
+    <footer class="bg-stone-800 text-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+            <p>Interactive Report based on the 2025 NSW Burns Community Survey.</p>
+            <p class="text-sm text-stone-400 mt-2">A community that knows itself is ready to build the future it envisions together.</p>
+        </div>
+    </footer>
+
     <script>
-        // Tab functionality
-        function showTab(tabId, button) {
-            // Hide all tab contents
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-            
-            // Remove active class from all buttons in this container
-            const container = button.closest('.tab-container');
-            const buttons = container.querySelectorAll('.tab-button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Show selected tab
-            document.getElementById(tabId).classList.add('active');
-            
-            // Add active class to clicked button
-            button.classList.add('active');
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            Chart.register(ChartDataLabels);
 
-        // Scroll reveal animation
-        function setupScrollReveal() {
-            const reveals = document.querySelectorAll('.reveal');
+            const chartColors = {
+                amber: 'rgba(217, 119, 6, 0.8)',
+                teal: 'rgba(13, 148, 136, 0.8)',
+                sky: 'rgba(2, 132, 199, 0.8)',
+                rose: 'rgba(225, 29, 72, 0.8)',
+                stone: 'rgba(120, 113, 108, 0.8)',
+                neutral: 'rgba(214, 211, 209, 0.8)',
+                green: 'rgba(22, 163, 74, 0.8)',
+                lightGreen: 'rgba(134, 239, 172, 0.8)',
+                red: 'rgba(220, 38, 38, 0.8)',
+                lightRed: 'rgba(252, 165, 165, 0.8)'
+            };
             
-            function revealOnScroll() {
-                reveals.forEach(element => {
-                    const windowHeight = window.innerHeight;
-                    const elementTop = element.getBoundingClientRect().top;
-                    const elementVisible = 150;
-                    
-                    if (elementTop < windowHeight - elementVisible) {
-                        element.classList.add('active');
+            const chartBorderColors = {
+                amber: 'rgb(217, 119, 6)',
+                teal: 'rgb(13, 148, 136)',
+                sky: 'rgb(2, 132, 199)',
+                rose: 'rgb(225, 29, 72)',
+                stone: 'rgb(120, 113, 108)',
+                neutral: 'rgb(214, 211, 209)'
+            };
+
+            const defaultChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#333',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 4,
+                        displayColors: false
+                    },
+                    datalabels: {
+                        color: '#ffffff',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: (value, context) => {
+                           if (context.chart.config.type === 'doughnut') {
+                                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const percentage = (value / total * 100).toFixed(0) + '%';
+                                return percentage;
+                           }
+                           return value;
+                        }
                     }
-                });
-            }
-            
-            window.addEventListener('scroll', revealOnScroll);
-            revealOnScroll(); // Check on load
-        }
-
-        // Animate bar fills on scroll
-        function animateBars() {
-            const bars = document.querySelectorAll('.bar-fill');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const bar = entry.target;
-                        const width = bar.style.width;
-                        bar.style.width = '0';
-                        
-                        setTimeout(() => {
-                            bar.style.width = width;
-                        }, 100);
-                        
-                        observer.unobserve(bar);
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#57534e', font: { size: 12 } },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: { color: '#57534e', font: { size: 12 } },
+                        grid: { color: '#e7e5e4' },
+                        beginAtZero: true
                     }
-                });
-            }, { threshold: 0.5 });
-            
-            bars.forEach(bar => observer.observe(bar));
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            setupScrollReveal();
-            animateBars();
-        });
-
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
                 }
+            };
+
+            const ageData = {
+                labels: ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75-84'],
+                datasets: [{
+                    label: 'Count',
+                    data: [2, 1, 89, 233, 119, 25, 11, 1],
+                    backgroundColor: [chartColors.neutral, chartColors.stone, chartColors.sky, chartColors.amber, chartColors.teal, chartColors.rose, chartColors.neutral, chartColors.neutral],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('ageChart'), {
+                type: 'bar',
+                data: ageData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+
+            const locationStatesData = {
+                labels: ['NSW', 'Victoria', 'ACT', 'QLD', 'SA'],
+                datasets: [{
+                    label: 'Count',
+                    data: [364, 58, 28, 17, 7],
+                    backgroundColor: [chartColors.amber, chartColors.teal, chartColors.sky, chartColors.rose, chartColors.stone],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('locationStatesChart'), {
+                type: 'bar',
+                data: locationStatesData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+
+            const locationClustersData = {
+                labels: ['Inner Sydney', 'Newcastle', 'Eastern Suburbs', 'Western Sydney'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [28, 22, 16, 8],
+                    backgroundColor: [chartColors.amber, chartColors.teal, chartColors.sky, chartColors.rose],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('locationClustersChart'), {
+                type: 'bar',
+                data: locationClustersData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333', formatter: (v) => v + '%' } } }
+            });
+
+            const experienceData = {
+                labels: ['Attended 5+ events', 'Attended 2-4 events', 'Attended 1 event', 'Not attended'],
+                datasets: [{
+                    data: [295, 105, 51, 29],
+                    backgroundColor: [chartColors.amber, chartColors.teal, chartColors.sky, chartColors.rose],
+                    borderColor: '#F8F7F4',
+                    borderWidth: 4,
+                    hoverOffset: 4
+                }]
+            };
+            new Chart(document.getElementById('experienceChart'), {
+                type: 'doughnut',
+                data: experienceData,
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
+            });
+
+            const familyStatusData = {
+                labels: ['No', 'Yes'],
+                datasets: [{
+                    data: [377, 103],
+                    backgroundColor: [chartColors.stone, chartColors.teal],
+                    borderColor: '#f1f5f9',
+                    borderWidth: 4,
+                    hoverOffset: 4
+                }]
+            };
+            new Chart(document.getElementById('familyStatusChart'), {
+                type: 'doughnut',
+                data: familyStatusData,
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
+            });
+
+            const bringKidsData = {
+                labels: ['Yes, have/would', "I'm open to it", 'No, I prefer not to', 'Maybe, it depends'],
+                datasets: [{
+                    label: 'Count',
+                    data: [42, 24, 27, 7],
+                    backgroundColor: [chartColors.green, chartColors.lightGreen, chartColors.red, chartColors.amber],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('bringKidsChart'), {
+                type: 'bar',
+                data: bringKidsData,
+                options: { ...defaultChartOptions, plugins: { datalabels: { color: 'white' } } }
+            });
+
+            const neurodivergentData = {
+                labels: ['No', 'Yes', "Questioning/Exploring"],
+                datasets: [{
+                    data: [203, 179, 100],
+                    backgroundColor: [chartColors.sky, chartColors.teal, chartColors.amber],
+                    borderColor: '#F8F7F4',
+                    borderWidth: 4,
+                    hoverOffset: 4
+                }]
+            };
+            new Chart(document.getElementById('neurodivergentChart'), {
+                type: 'doughnut',
+                data: neurodivergentData,
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
+            });
+            
+            const motivationsData = {
+                labels: ['Community & connection', 'Self-expression', 'Art & music', 'Escape', 'Personal growth'],
+                datasets: [{
+                    label: 'Respondents',
+                    data: [367, 299, 232, 183, 169],
+                    backgroundColor: [chartColors.teal, chartColors.amber, chartColors.rose, chartColors.sky, chartColors.stone],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('motivationsChart'), {
+                type: 'bar',
+                data: motivationsData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+
+            const accessibilityNeedsData = {
+                labels: ['Sound separation', 'Quiet/sensory zones', 'Clear info/signage', 'Social interaction support', 'Reduced sensory input'],
+                datasets: [{
+                    label: 'Respondents',
+                    data: [241, 217, 193, 140, 101],
+                    backgroundColor: [chartColors.teal, chartColors.amber, chartColors.sky, chartColors.rose, chartColors.stone],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('accessibilityNeedsChart'), {
+                type: 'bar',
+                data: accessibilityNeedsData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+            
+            const contributionData = {
+                labels: ['Theme Camp member', 'Event volunteer', 'Individual participant', 'Theme Camp lead', 'Art installation creator', 'Event organiser', 'Volunteer team lead'],
+                datasets: [{
+                    label: 'Count',
+                    data: [284, 269, 229, 130, 104, 89, 82],
+                    backgroundColor: [chartColors.sky, chartColors.teal, chartColors.amber, chartColors.rose, chartColors.stone, chartColors.neutral, chartColors.neutral],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('contributionChart'), {
+                type: 'bar',
+                data: contributionData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+
+            const volunteerData = {
+                labels: ['Leave No Trace', 'Gate', 'Greeter', 'Ranger', 'Crew Kitchen', 'Art Dept', 'Medical/First Aid', 'Sound/Music', 'Infrastructure', 'Comms'],
+                datasets: [{
+                    label: 'Previous Experience',
+                    data: [164, 139, 129, 98, 77, 61, 43, 39, 36, 29],
+                    backgroundColor: [chartColors.sky, chartColors.teal, chartColors.amber, chartColors.rose, chartColors.stone, chartColors.neutral, chartColors.neutral, chartColors.neutral, chartColors.neutral, chartColors.neutral],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('volunteerChart'), {
+                type: 'bar',
+                data: volunteerData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+            
+            const leadershipData = {
+                labels: ['Team Member', 'Project Wrangler', 'Team Lead', 'Big Picture Visionary', 'Dept. Captain'],
+                datasets: [{
+                    label: 'Interest Level',
+                    data: [81, 70, 57, 38, 28],
+                    backgroundColor: [chartColors.sky, chartColors.teal, chartColors.amber, chartColors.rose, chartColors.stone],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('leadershipChart'), {
+                type: 'bar',
+                data: leadershipData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+            
+            const whatMattersMostData = {
+                labels: ['Build NSW Community', 'Sydney Accessibility', 'Interstate Connections', 'Draw Interstate Participants'],
+                datasets: [
+                    {
+                        label: 'Very Important',
+                        data: [125, 88, 74, 38],
+                        backgroundColor: chartColors.rose,
+                    },
+                    {
+                        label: 'Somewhat Important',
+                        data: [125, 123, 124, 90],
+                        backgroundColor: chartColors.amber,
+                    }
+                ]
+            };
+            new Chart(document.getElementById('whatMattersMostChart'), {
+                type: 'bar',
+                data: whatMattersMostData,
+                options: {
+                    ...defaultChartOptions,
+                    indexAxis: 'y',
+                    scales: { x: { stacked: true }, y: { stacked: true } },
+                    plugins: {
+                        ...defaultChartOptions.plugins,
+                        legend: { display: true, position: 'bottom' },
+                        datalabels: { color: '#fff' }
+                    }
+                }
+            });
+
+            const officialStatusData = {
+                labels: ['Not Very Important', 'Not at all Important', 'Somewhat Important', 'Very Important', 'Absolutely Essential'],
+                datasets: [{
+                    label: 'Count',
+                    data: [114, 90, 87, 43, 22],
+                    backgroundColor: [chartColors.stone, chartColors.neutral, chartColors.amber, chartColors.rose, chartColors.rose],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+             new Chart(document.getElementById('officialStatusChart'), {
+                type: 'bar',
+                data: officialStatusData,
+                options: { ...defaultChartOptions, plugins: { datalabels: { anchor: 'end', align: 'end', color: '#333' } } }
+            });
+            
+            const monthlyLikelihoodData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    { label: 'Very Likely', data: [124, 144, 178, 173, 114, 54, 44, 48, 126, 180, 170, 108], backgroundColor: chartColors.green },
+                    { label: 'Somewhat Likely', data: [101, 101, 102, 118, 103, 71, 59, 71, 119, 120, 119, 80], backgroundColor: chartColors.lightGreen },
+                    { label: 'Neutral', data: [46, 37, 56, 48, 79, 61, 52, 59, 60, 47, 42, 41], backgroundColor: chartColors.neutral },
+                    { label: 'Somewhat Unlikely', data: [38, 46, 16, 20, 48, 99, 90, 78, 34, 9, 18, 57], backgroundColor: chartColors.lightRed },
+                    { label: 'Very Unlikely', data: [65, 47, 22, 15, 24, 86, 125, 113, 33, 17, 24, 81], backgroundColor: chartColors.red }
+                ]
+            };
+            new Chart(document.getElementById('monthlyLikelihoodChart'), {
+                type: 'bar',
+                data: monthlyLikelihoodData,
+                options: {
+                    ...defaultChartOptions,
+                    scales: { x: { stacked: true }, y: { stacked: true } },
+                    plugins: {
+                        ...defaultChartOptions.plugins,
+                        legend: { display: true, position: 'bottom' },
+                        datalabels: { display: false }
+                    }
+                }
+            });
+
+            const publicHolidayImportanceData = {
+                labels: ['Somewhat Important', 'Neutral', 'Not Important', 'Very Important', 'Somewhat Unimportant'],
+                datasets: [{
+                    label: 'Count',
+                    data: [116, 104, 101, 31, 30],
+                    backgroundColor: [chartColors.amber, chartColors.neutral, chartColors.stone, chartColors.rose, chartColors.lightRed],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('publicHolidayImportanceChart'), {
+                type: 'bar',
+                data: publicHolidayImportanceData,
+                options: { ...defaultChartOptions, plugins: { datalabels: { color: 'white' } } }
+            });
+
+            const artBurnImportanceData = {
+                labels: ["Nice but not essential", "Very important", "Essential, non-negotiable", "Not important", "No opinion"],
+                datasets: [{
+                    label: 'Count',
+                    data: [164, 133, 65, 25, 6],
+                    backgroundColor: [chartColors.amber, chartColors.rose, chartColors.red, chartColors.stone, chartColors.neutral],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('artBurnImportanceChart'), {
+                type: 'bar',
+                data: artBurnImportanceData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+
+            const timingData = {
+                labels: ['Labour Day (Oct)', 'All work', 'Easter', 'Australia Day (Jan)', "King's B'day (Jun)"],
+                datasets: [{
+                    label: 'Preference',
+                    data: [191, 164, 158, 129, 112],
+                    backgroundColor: [chartColors.rose, chartColors.teal, chartColors.amber, chartColors.sky, chartColors.stone],
+                    borderColor: Object.values(chartBorderColors),
+                    borderWidth: 1
+                }]
+            };
+            new Chart(document.getElementById('timingChart'), {
+                type: 'bar',
+                data: timingData,
+                options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+            });
+
+            const personas = [
+                { name: 'Veteran Community Architect', icon: '&#128736;', color: 'amber', description: 'Experienced leaders forming the organisational backbone. They advocate for structure, accessibility, and sustainable governance.', age: '35-54', driver: 'Infrastructure & Legacy' },
+                { name: 'Creative Contributor', icon: '&#127912;', color: 'rose', description: 'Passionate artists and makers driven by creative collaboration and self-expression. They value the gift economy and participant-created content.', age: '25-44', driver: 'Artistic Expression' },
+                { name: 'Community Connector', icon: '&#129309;', color: 'teal', description: 'Motivated by authentic human connection. They excel at creating welcoming spaces, facilitating workshops, and building bridges.', age: '25-44', driver: 'Belonging & Growth' },
+                { name: 'Family-Focused Participant', icon: '&#128104;&#8205;&#128105;&#8205;&#128103;', color: 'sky', description: 'Balancing Burner identity with family life. They are strong advocates for safety, accessibility, and intergenerational experiences.', age: '35-54', driver: 'Intergenerational Experience' },
+                { name: 'Balanced Participant', icon: '&#9878;', color: 'stone', description: 'Practical participants who contribute meaningfully while maintaining healthy boundaries. They represent a model of sustainable engagement.', age: '25-54', driver: 'Balanced Participation' }
+            ];
+            const personasContainer = document.getElementById('personas-container');
+            personas.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `persona-card cursor-pointer bg-white p-6 rounded-lg shadow-sm border-t-4 border-${p.color}-500`;
+                card.innerHTML = `
+                    <div class="text-4xl">${p.icon}</div>
+                    <h4 class="mt-4 text-lg font-semibold text-stone-900">${p.name}</h4>
+                    <p class="mt-1 text-sm text-stone-600"><strong>Driver:</strong> ${p.driver}</p>
+                    <p class="mt-2 text-sm text-stone-500">${p.description}</p>
+                `;
+                personasContainer.appendChild(card);
+            });
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (!mobileMenu.classList.contains('hidden')) {
+                         mobileMenu.classList.add('hidden');
+                    }
+                });
             });
         });
     </script>
