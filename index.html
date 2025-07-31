@@ -330,6 +330,15 @@
                 <div class="mt-12 bg-stone-100 p-6 rounded-lg text-center">
                     <p class="text-lg text-stone-700 italic max-w-3xl mx-auto">This was the finding that changed everything. At triple the general population rate, we are not a neurotypical community with a neurodivergent minority. We are a neurodivergent-majority community. This means we're not just accommodating a few; we must design for our majority.</p>
                 </div>
+                
+                <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Current Community Connection</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">While we value connection deeply, many of us feel disconnected from the broader community. This data reveals both our desire for belonging and the communication challenges we face.</p>
+                    <div class="mt-6 chart-container"><canvas id="communityConnectionChart"></canvas></div>
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-stone-600 italic">Only 18% feel very connected, while 31% feel disconnected or neutral. This explains the widespread calls for improved communication and community building.</p>
+                    </div>
+                </div>
                  <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
                         <h3 class="text-xl sm:text-2xl font-bold text-stone-900">A Neurodivergent-Majority Community</h3>
@@ -422,6 +431,21 @@
                 </div>
                 
                 <div class="mt-12 bg-stone-100 p-6 sm:p-8 rounded-lg">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Importance of Large-Scale Art Burns</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The community shows nuanced understanding of art burns - 51% consider them essential or very important, while 42% see them as nice but not essential. This suggests room for hybrid approaches.</p>
+                    <div class="mt-6 chart-container"><canvas id="artBurnsImportanceChart"></canvas></div>
+                </div>
+                
+                <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Fire Season Trade-offs</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">When forced to choose between weather and burns due to fire restrictions, the community shows remarkable pragmatism. 44% prefer warmer weather without burns, while 23% prefer colder weather with burns.</p>
+                    <div class="mt-6 chart-container"><canvas id="fireSeasonTradeoffsChart"></canvas></div>
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-stone-600 italic">This data demonstrates the community's sophisticated understanding of practical constraints and willingness to adapt to climate realities.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-12 bg-stone-100 p-6 sm:p-8 rounded-lg">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Monthly Event Likelihood</h3>
                     <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The shoulder seasons of Autumn (Mar-Apr) and Spring (Oct-Nov) are clear favourites, avoiding peak summer fire risk and deep winter cold.</p>
                     <div class="mt-6 chart-container-large"><canvas id="monthlyLikelihoodChart"></canvas></div>
@@ -431,6 +455,12 @@
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Preferred Long Weekend</h3>
                     <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The October Labour Day long weekend is the top choice, aligning with the monthly preference data. However, with 43% stating any long weekend works, there is huge flexibility.</p>
                     <div class="mt-6 chart-container"><canvas id="timingChart"></canvas></div>
+                </div>
+                
+                <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Public Holidays Importance</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The community shows sophisticated understanding of practical constraints - only 8% consider public holidays very important, while 38% find them somewhat important or neutral. This suggests flexibility in timing.</p>
+                    <div class="mt-6 chart-container"><canvas id="publicHolidaysChart"></canvas></div>
                 </div>
 
                 <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
@@ -1015,6 +1045,66 @@
                         }]
                     },
                     options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+                });
+
+                allCharts.communityConnectionChart = new Chart(document.getElementById('communityConnectionChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Very Connected', 'Somewhat Connected', 'Neutral', 'Somewhat Disconnected', 'Very Disconnected'],
+                        datasets: [{
+                            data: [18, 36, 15, 21, 10],
+                            backgroundColor: [chartColors.green, chartColors.lightGreen, chartColors.neutral, chartColors.lightRed, chartColors.red],
+                            borderColor: '#F8F7F4',
+                            borderWidth: 4,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
+                });
+
+                allCharts.artBurnsImportanceChart = new Chart(document.getElementById('artBurnsImportanceChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Essential, non-negotiable', 'Very important', 'Nice but not essential', 'Not important', 'No opinion'],
+                        datasets: [{
+                            data: [17, 34, 42, 6, 2],
+                            backgroundColor: [chartColors.rose, chartColors.amber, chartColors.teal, chartColors.stone, chartColors.neutral],
+                            borderColor: '#F8F7F4',
+                            borderWidth: 4,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
+                });
+
+                allCharts.fireSeasonTradeoffsChart = new Chart(document.getElementById('fireSeasonTradeoffsChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Warmer months without burns', 'Colder months with burns', 'No preference'],
+                        datasets: [{
+                            data: [44, 23, 34],
+                            backgroundColor: [chartColors.amber, chartColors.rose, chartColors.teal],
+                            borderColor: '#F8F7F4',
+                            borderWidth: 4,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
+                });
+
+                allCharts.publicHolidaysChart = new Chart(document.getElementById('publicHolidaysChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Very Important', 'Somewhat Important', 'Neutral', 'Somewhat Unimportant', 'Not Important'],
+                        datasets: [{
+                            data: [8, 30, 27, 8, 26],
+                            backgroundColor: [chartColors.rose, chartColors.amber, chartColors.neutral, chartColors.stone, chartColors.sky],
+                            borderColor: '#F8F7F4',
+                            borderWidth: 4,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
                 });
             }
             
