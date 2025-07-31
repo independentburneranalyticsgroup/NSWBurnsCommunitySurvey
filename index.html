@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: A tabbed, multi-view single-page application based on audience. Three primary views: 'Our Community' (for newcomers), 'For Volunteers' (for potential volunteers), and 'For Organisers' (for organisers). This structure segments the vast amount of information, making it highly relevant to each target user group, reducing cognitive load and guiding them to the most pertinent data for their needs. This is a significant shift from a single-scroll page to a more interactive, task-oriented design. -->
+    <!-- Application Structure Plan: A thematic, single-page scrolling application. The structure is designed for a narrative user journey, starting with foundational data and progressing to strategic insights. The five sections are: 'Who We Are', 'Our Culture & Values', 'Our Capabilities', 'Future Vision', and 'Resources & Recommendations'. This approach allows any user to easily navigate to the content most relevant to them via a sticky navigation bar, providing a more intuitive experience than audience-based tabs. -->
     <!-- Visualization & Content Choices: Data is presented using Chart.js for interactive visualizations, paired with key insights in text blocks for context. Goals: Inform (Doughnut/Bar charts for demographics/preferences), Compare (Bar/Stacked Bar/Line charts for motivations/skills/priorities), Organize (Clickable cards for Community Personas, structured lists for resources). Interactions include chart tooltips for detail and clickable persona cards to reveal information, making the experience engaging. This approach turns static data into an exploratory tool. Library/Method: Chart.js (Canvas) with chartjs-plugin-datalabels for all charts. HTML/CSS/Tailwind for all layouts and diagrams. Unicode characters for icons. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -29,6 +29,15 @@
             height: 350px;
             max-height: 400px;
         }
+        .chart-container-tall {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 550px;
+        }
         .chart-container-large {
              position: relative;
             width: 100%;
@@ -43,18 +52,21 @@
                 height: 400px;
                 max-height: 450px;
             }
+            .chart-container-tall {
+                height: 600px;
+                max-height: 650px;
+            }
              .chart-container-large {
                 height: 500px;
                 max-height: 550px;
             }
         }
-        .view-nav-button {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
         }
-        .view-nav-button.active {
-            background-color: #D97706; /* amber-600 */
-            color: white;
-            border-color: #D97706;
+        .nav-link.active {
+            color: #D97706; /* amber-600 */
+            border-bottom-color: #D97706;
         }
         .persona-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -76,44 +88,85 @@
 </head>
 <body class="bg-stone-50 text-stone-800">
 
-    <header class="bg-white sticky top-0 z-50 border-b border-stone-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center">
-             <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900">Our Story: A Community in Transition</h1>
-             <p class="mt-2 text-sm text-stone-600">An interactive report on the 2025 NSW Burns Community Survey</p>
-        </div>
-        <nav id="view-navigation" class="border-t border-stone-200 bg-stone-50">
-             <div class="max-w-4xl mx-auto p-2 grid grid-cols-3 gap-2">
-                <button data-view="discover" class="view-nav-button active w-full py-2 px-4 border border-stone-300 rounded-md text-sm font-medium text-stone-700 hover:bg-stone-200">
-                    <span class="text-2xl sm:hidden">&#128269;</span><span class="hidden sm:inline">Our Community</span>
-                </button>
-                <button data-view="contribute" class="view-nav-button w-full py-2 px-4 border border-stone-300 rounded-md text-sm font-medium text-stone-700 hover:bg-stone-200">
-                    <span class="text-2xl sm:hidden">&#128736;</span><span class="hidden sm:inline">For Volunteers</span>
-                </button>
-                <button data-view="organise" class="view-nav-button w-full py-2 px-4 border border-stone-300 rounded-md text-sm font-medium text-stone-700 hover:bg-stone-200">
-                     <span class="text-2xl sm:hidden">&#128200;</span><span class="hidden sm:inline">For Organisers</span>
-                </button>
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-amber-700">NSW Burns Report</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#who-we-are" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Who We Are</a>
+                        <a href="#our-culture" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Our Culture</a>
+                        <a href="#our-capabilities" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Our Capabilities</a>
+                        <a href="#future-vision" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Future Vision</a>
+                        <a href="#resources-recommendations" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Resources & Recs</a>
+                    </div>
+                </div>
+                 <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-stone-600 hover:text-amber-600 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-amber-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </nav>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#who-we-are" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Who We Are</a>
+                <a href="#our-culture" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Our Culture</a>
+                <a href="#our-capabilities" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Our Capabilities</a>
+                <a href="#future-vision" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Future Vision</a>
+                <a href="#resources-recommendations" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Resources & Recs</a>
+            </div>
+        </div>
     </header>
 
-    <main id="discover-view" class="view-content">
-        <section class="py-12 sm:py-16">
+    <main>
+        <section id="home" class="py-20 sm:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-stone-900">Our Story: A Community in Transition</h1>
+                <p class="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-stone-600">An interactive exploration of the 2025 NSW Burns Community Survey, revealing a mature, experienced, and capable community ready to build its future.</p>
+                <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-amber-600">518</p>
+                        <p class="mt-2 text-stone-600">Community Voices</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-teal-600">58%</p>
+                        <p class="mt-2 text-stone-600">Neurodivergent</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-sky-600">425+</p>
+                        <p class="mt-2 text-stone-600">Ready to Volunteer</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-4xl font-bold text-rose-600">83%</p>
+                        <p class="mt-2 text-stone-600">Experienced Burners</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="who-we-are" class="py-16 sm:py-24 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <h2 class="text-base font-semibold text-amber-600 tracking-wide uppercase">Portraits of Our Community</h2>
                     <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Who We Are</p>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">This section provides a snapshot of our community's demographics. The data reveals a mature, experienced, and geographically concentrated group with deep roots in Burner culture, ready to guide its next chapter.</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">Before we explore our future, we need to understand who we are right now. The data shows we are not starting from scratch; we are an established community of adults with deep experience, resources, and complex responsibilities. This is our strength.</p>
                 </div>
 
-                <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                     <div>
                         <h3 class="text-xl sm:text-2xl font-bold text-stone-900">Age Distribution</h3>
-                        <p class="mt-3 text-base text-stone-600">Our community's core is middle-aged (73% are 35-54), indicating a stable, experienced participant base with the life stability and resources for long-term community building.</p>
+                        <p class="mt-3 text-base text-stone-600">Our community's core is middle-aged (73% are 35-54), indicating a stable, experienced participant base.</p>
                         <div class="mt-6 chart-container"><canvas id="ageChart"></canvas></div>
                     </div>
                     <div>
                         <h3 class="text-xl sm:text-2xl font-bold text-stone-900">Geographic Distribution</h3>
-                        <p class="mt-3 text-base text-stone-600">Our community is firmly rooted in NSW, but with significant interstate appeal, providing a strong foundation for local events with broader reach.</p>
+                        <p class="mt-3 text-base text-stone-600">Our community is firmly rooted in NSW, but with significant interstate appeal.</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
                             <div>
                                 <h4 class="text-lg font-semibold text-center">By State</h4>
@@ -126,14 +179,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-12">
+                <div class="mt-16">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Experience Level</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">We are a veteran-heavy community. A remarkable 83% have attended multiple Burner events, with over 60% having been to five or more. This deep cultural knowledge is our greatest asset for maintaining authenticity and mentoring newcomers.</p>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">We are a veteran-heavy community. A remarkable 83% have attended multiple Burner events, with over 60% having been to five or more.</p>
                     <div class="mt-6 chart-container max-w-md"><canvas id="experienceChart"></canvas></div>
                 </div>
-                <div class="mt-12 bg-stone-100 p-6 sm:p-8 rounded-lg">
+                <div class="mt-12 bg-stone-100 p-6 rounded-lg text-center">
+                    <p class="text-lg text-stone-700 italic max-w-3xl mx-auto">This data reveals both a strength and a challenge: with 61% of us having attended 5+ events, how do we create conscious pathways for newcomers, so we don't risk becoming a closed circle?</p>
+                </div>
+                <div class="mt-16 bg-stone-100 p-6 sm:p-8 rounded-lg">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Family & Kids' Participation</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">A significant portion of our community are parents, and many are open to or actively bring their children to events, highlighting the need for family-friendly spaces and planning.</p>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">A significant portion of our community are parents, and many are open to or actively bring their children to events.</p>
                     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                         <div>
                              <h4 class="text-lg font-semibold text-stone-800 text-center">Parents in the Community</h4>
@@ -142,274 +198,241 @@
                         </div>
                         <div>
                              <h4 class="text-lg font-semibold text-stone-800 text-center">Bringing Kids to Events</h4>
-                             <p class="mt-2 text-sm text-stone-600 text-center">Of those with kids, a combined 66% have brought them or are open to it, while 27% prefer to attend without them.</p>
+                             <p class="mt-2 text-sm text-stone-600 text-center">Of those with kids, a combined 66% have brought them or are open to it.</p>
                              <div class="mt-4 chart-container"><canvas id="bringKidsChart"></canvas></div>
                         </div>
                     </div>
                 </div>
-                 <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            </div>
+        </section>
+
+        <section id="our-culture" class="py-16 sm:py-24">
+             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-teal-600 tracking-wide uppercase">Inclusion & Connection</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Our Culture & Values</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">What truly defines us? It's not just what we do, but *why* we do it. The data here reveals our core motivations and uncovers a profound truth about our community's makeup that changes everything.</p>
+                </div>
+                <div class="mt-16 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Primary Motivations</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center">Why do we come? Overwhelmingly, for community and connection, and self-expression.</p>
+                    <div class="mt-6 chart-container"><canvas id="motivationsChart"></canvas></div>
+                    <div class="mt-8 text-left">
+                         <h4 class="text-lg font-semibold text-stone-800">Key Motivators:</h4>
+                         <ul class="mt-4 space-y-4 text-stone-600">
+                             <li class="flex items-start">
+                                 <span class="text-teal-500 font-bold mr-3 mt-1">&#10148;</span>
+                                 <div><strong class="text-stone-800">Community & Connection (76%):</strong> Drawn to the strong, inclusive community ethos.
+                                     <blockquote class="mt-1 pl-4 border-l-4 border-stone-200 text-sm text-stone-500">"It's always about community..."</blockquote>
+                                 </div>
+                             </li>
+                             <li class="flex items-start">
+                                 <span class="text-teal-500 font-bold mr-3 mt-1">&#10148;</span>
+                                 <div><strong class="text-stone-800">Self-Expression & Creativity (62%):</strong> A non-judgmental space for authentic self-expression.
+                                     <blockquote class="mt-1 pl-4 border-l-4 border-stone-200 text-sm text-stone-500">"Being able to be myself and drop the mask..."</blockquote>
+                                 </div>
+                             </li>
+                         </ul>
+                    </div>
+                </div>
+                <div class="mt-12 bg-stone-100 p-6 rounded-lg text-center">
+                    <p class="text-lg text-stone-700 italic max-w-3xl mx-auto">This was the finding that changed everything. At triple the general population rate, we are not a neurotypical community with a neurodivergent minority. We are a neurodivergent-majority community. This means we're not just accommodating a few; we must design for our majority.</p>
+                </div>
+                 <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
                         <h3 class="text-xl sm:text-2xl font-bold text-stone-900">A Neurodivergent-Majority Community</h3>
-                        <p class="mt-3 text-base text-stone-600">With 58% of our community identifying as or exploring neurodivergence, we are fundamentally different from the general population. This has profound implications for event design, demanding we prioritise sensory-friendly spaces, clear communication, and flexible participation.</p>
+                        <p class="mt-3 text-base text-stone-600">With 58% of our community identifying as or exploring neurodivergence, we are fundamentally different from the general population. This demands we prioritise sensory-friendly spaces and clear communication.</p>
                         <div class="mt-6 chart-container max-w-md"><canvas id="neurodivergentChart"></canvas></div>
                     </div>
                     <div class="bg-white p-6 sm:p-8 rounded-lg shadow-sm">
-                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Primary Motivations</h3>
-                        <p class="mt-3 text-base text-stone-600 text-center">Why do we come? Overwhelmingly, for community and connection, and self-expression. This tells us that successful events must prioritise participation and authentic human interaction over passive entertainment.</p>
-                        <div class="mt-6 chart-container"><canvas id="motivationsChart"></canvas></div>
-                        <div class="mt-8 text-left">
-                             <h4 class="text-lg font-semibold text-stone-800">Key Motivators:</h4>
-                             <ul class="mt-4 space-y-4 text-stone-600">
-                                 <li class="flex items-start">
-                                     <span class="text-teal-500 font-bold mr-3 mt-1">&#10148;</span>
-                                     <div><strong class="text-stone-800">Community & Connection (76%):</strong> Participants are drawn to the strong, inclusive community ethos.
-                                         <blockquote class="mt-1 pl-4 border-l-4 border-stone-200 text-sm text-stone-500">"It's always about community and have a Preference for events where the community is strong and at the heart."</blockquote>
-                                     </div>
-                                 </li>
-                                 <li class="flex items-start">
-                                     <span class="text-teal-500 font-bold mr-3 mt-1">&#10148;</span>
-                                     <div><strong class="text-stone-800">Self-Expression & Creativity (62%):</strong> Events provide a non-judgmental space for authentic self-expression.
-                                         <blockquote class="mt-1 pl-4 border-l-4 border-stone-200 text-sm text-stone-500">"Being able to be myself and drop the mask I have to ware in a nerotypical world and not be judged."</blockquote>
-                                     </div>
-                                 </li>
-                                  <li class="flex items-start">
-                                     <span class="text-teal-500 font-bold mr-3 mt-1">&#10148;</span>
-                                     <div><strong class="text-stone-800">Personal Growth & Transformation (42%):</strong> Many see these events as "transformational" and a place to live as an example of how they want to be in the world.</div>
-                                 </li>
-                             </ul>
+                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Accessibility is Inclusion</h3>
+                        <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">A massive 77% of our community benefits from accessibility features. The greatest needs are sensory and physical, making accessibility a core design principle.</p>
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-center">Sensory & Social Accessibility</h4>
+                                <div class="mt-2 chart-container"><canvas id="accessibilityNeedsChart"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-center">Physical Accessibility</h4>
+                                <div class="mt-2 chart-container"><canvas id="physicalAccessibilityChart"></canvas></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                 <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
-                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Accessibility is Inclusion</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">While 20% face physical challenges, a massive 77% of our community benefits from accessibility features. The greatest needs are sensory: sound separation and quiet zones. This makes accessibility a core design principle, not an afterthought.</p>
-                    <div class="mt-6 chart-container"><canvas id="accessibilityNeedsChart"></canvas></div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <main id="contribute-view" class="view-content hidden">
-        <section class="py-16 sm:py-20">
+        <section id="our-capabilities" class="py-16 sm:py-24 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <h2 class="text-base font-semibold text-sky-600 tracking-wide uppercase">Capacity & Leadership</h2>
-                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">For Volunteers</p>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">This section showcases our collective strength. The data reveals an abundance of volunteer experience and leadership potential. We don't have a problem of scarcity; we have an opportunity of abundance, with the right people ready to step up.</p>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Our Capabilities</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">We have the people and the skills to create amazing things. But *how* we engage that talent is our biggest challenge. The data here shows both our incredible capacity and the signs of critical burnout.</p>
                 </div>
 
-                <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                      <div>
                         <h3 class="text-xl sm:text-2xl font-bold text-stone-900">How We Contribute</h3>
-                        <p class="mt-3 text-base text-stone-600">Participation is our foundation. While many contribute as Theme Camp members (66%) and Event Volunteers (62%), a significant number also take on key leadership and creative roles that make events possible.</p>
+                        <p class="mt-3 text-base text-stone-600">Participation is our foundation. A significant number take on key leadership and creative roles that make events possible.</p>
                         <div class="mt-6 chart-container"><canvas id="contributionChart"></canvas></div>
                     </div>
-                    <div>
-                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900">Volunteer Experience</h3>
-                        <p class="mt-3 text-base text-stone-600">Our community has deep experience across all essential roles, demonstrating a proven commitment to our principles and the safety and enjoyment of all participants.</p>
-                        <div class="mt-6 chart-container"><canvas id="volunteerChart"></canvas></div>
-                    </div>
-                    <div class="lg:col-span-2 mt-12">
-                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Leadership Interest</h3>
-                        <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">There is a healthy balance of people ready to lead and support. 51% are interested in coordination roles, with a strong preference for project-based leadership, suggesting a sustainable pipeline for future events.</p>
-                        <div class="mt-6 chart-container"><canvas id="leadershipChart"></canvas></div>
-                        <div class="mt-8 max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-sm">
-                             <h4 class="text-lg font-semibold text-stone-800">Leadership Commitment Levels</h4>
-                             <p class="mt-2 text-stone-600">Our community leaders are willing to commit reasonable hours that support sustainable engagement. This demonstrates an understanding that volunteer leadership must be balanced with other life commitments.</p>
-                             <ul class="mt-4 space-y-2 text-sm">
-                                 <li class="flex justify-between items-center"><span class="font-medium text-stone-700">Team Leads:</span> <span class="text-stone-600">1-4 hours weekly (event season)</span></li>
-                                 <li class="flex justify-between items-center"><span class="font-medium text-stone-700">Department Captains:</span> <span class="text-stone-600">4-8 hours weekly (event season)</span></li>
-                                 <li class="flex justify-between items-center"><span class="font-medium text-stone-700">Strategic Roles:</span> <span class="text-stone-600">3-5 hours weekly (year round)</span></li>
-                             </ul>
-                        </div>
+                    <div class="bg-stone-100 p-6 sm:p-8 rounded-lg">
+                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900">Community Skillset</h3>
+                        <p class="mt-3 text-base text-stone-600">Our community possesses a deep well of practical skills, with a healthy mix of members ready to lead teams and others happy to contribute their expertise.</p>
+                        <div class="mt-6 chart-container-tall"><canvas id="skillsChart"></canvas></div>
                     </div>
                 </div>
-
+                <div class="mt-12 bg-stone-100 p-6 rounded-lg text-center">
+                    <p class="text-lg text-stone-700 italic max-w-3xl mx-auto">This is both our greatest strength and our most critical vulnerability. We are a community of dedicated contributors, but we are at risk of consuming our most dedicated people.</p>
+                </div>
+                <div class="mt-12">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Volunteer Experience</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">Our community has deep experience across all essential roles, demonstrating a proven commitment to our principles.</p>
+                    <div class="mt-6 chart-container-tall"><canvas id="volunteerChart"></canvas></div>
+                </div>
+                <div class="mt-16">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Leadership Interest</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">There is a healthy balance of people ready to lead and support. 51% are interested in coordination roles, suggesting a sustainable pipeline for future events.</p>
+                    <div class="mt-6 chart-container"><canvas id="leadershipChart"></canvas></div>
+                    <div class="mt-8 max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-sm">
+                         <h4 class="text-lg font-semibold text-stone-800">Leadership Commitment Levels</h4>
+                         <p class="mt-2 text-stone-600">Leaders are willing to commit reasonable hours, understanding that volunteer leadership must be sustainable and balanced with other life commitments.</p>
+                         <ul class="mt-4 space-y-2 text-sm">
+                             <li class="flex justify-between items-center"><span class="font-medium text-stone-700">Team Leads:</span> <span class="text-stone-600">1-4 hours weekly (event season)</span></li>
+                             <li class="flex justify-between items-center"><span class="font-medium text-stone-700">Department Captains:</span> <span class="text-stone-600">4-8 hours weekly (event season)</span></li>
+                             <li class="flex justify-between items-center"><span class="font-medium text-stone-700">Strategic Roles:</span> <span class="text-stone-600">3-5 hours weekly (year round)</span></li>
+                         </ul>
+                    </div>
+                </div>
                 <div class="mt-16">
                     <h3 class="text-3xl font-bold text-stone-900 text-center">Community Personas</h3>
                     <p class="mt-4 max-w-3xl mx-auto text-center text-lg text-stone-600">Five distinct archetypes emerged from the data, helping us understand the different motivations and capabilities within our community. Click on each persona to learn more.</p>
                     <div id="personas-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     </div>
                 </div>
-                 <div class="mt-16 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
-                    <div class="text-center">
-                        <h2 class="text-base font-semibold text-amber-600 tracking-wide uppercase">Collective Wisdom</h2>
-                        <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Community Resources</p>
-                        <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">The survey unearthed a treasure trove of actionable leads, from potential event sites to skilled suppliers. This is a community with the connections and resources to make its vision a reality.</p>
-                    </div>
-                    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-stone-50 p-6 rounded-lg">
-                            <h3 class="text-xl font-semibold text-stone-900 mb-4">Finding a New Home</h3>
-                            <ul class="space-y-3 text-sm text-stone-700">
-                                <li><strong class="text-stone-800">Top Suggestions:</strong> Glenworth Valley, Dragon Dreaming site (Wee Jasper), Confest site (Woorooma Station).</li>
-                                <li><strong class="text-stone-800">Other Mentions:</strong> Matong State Forest, Castle Mountain, Parkes, Wingham/Taree area, Riverwood Downs.</li>
-                                 <li><strong class="text-stone-800">Actionable Leads:</strong> Contacts provided for properties in Bellingen, Mandalong, and "The Lair" on the Central Coast.</li>
-                            </ul>
-                        </div>
-                        <div class="bg-stone-50 p-6 rounded-lg">
-                            <h3 class="text-xl font-semibold text-stone-900 mb-4">Community Suppliers & Equipment</h3>
-                            <ul class="space-y-3 text-sm text-stone-700">
-                                 <li><strong class="text-stone-800">Sound/AV:</strong> Cody Lawton (Litness Lights), Justin "Cosmos" James (Dynamic Audio Visual), Julian Lacey/Nicholas Randell (Sunset Town).</li>
-                                 <li><strong class="text-stone-800">Maker Spaces:</strong> Newcastle's Sparkhaus and Sydney's RoboDino.</li>
-                                 <li><strong class="text-stone-800">Logistics:</strong> Sapphire Events, Spaceman Design, ATS Logistics, Crew on Call.</li>
-                            </ul>
-                        </div>
-                        <div class="bg-stone-50 p-6 rounded-lg">
-                            <h3 class="text-xl font-semibold text-stone-900 mb-4">Support for Artists & Theme Camps</h3>
-                            <ul class="space-y-3 text-sm text-stone-700">
-                                <li><strong class="text-stone-800">Primary Need:</strong> Increased and more accessible funding, including transport subsidies.</li>
-                                <li><strong class="text-stone-800">Shared Resources:</strong> Desire for a community "Library of Things" for tools and equipment.</li>
-                                <li><strong class="text-stone-800">Mentorship:</strong> A structured system for knowledge sharing between experienced and new creators.</li>
-                            </ul>
-                        </div>
-                         <div class="bg-stone-50 p-6 rounded-lg">
-                            <h3 class="text-xl font-semibold text-stone-900 mb-4">Potential Community Partners</h3>
-                            <ul class="space-y-3 text-sm text-stone-700">
-                                 <li><strong class="text-stone-800">Festivals:</strong> ConFest, Dragon Dreaming, Modifyre (QLD), Blazing Swan (WA).</li>
-                                 <li><strong class="text-stone-800">Arts/Maker Groups:</strong> Sparkhaus, local Men's Sheds, Newtown Festival.</li>
-                                 <li><strong class="text-stone-800">Government/Local Bodies:</strong> Local Aboriginal Land Councils, Regional Arts NSW, Create NSW.</li>
-                                 <li><strong class="text-stone-800">Environmental Groups:</strong> Reverse Garbage, The Bower, Landcare.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
-    </main>
     
-    <main id="organise-view" class="view-content hidden">
-         <section class="py-16 sm:py-20">
+        <section id="future-vision" class="py-16 sm:py-24">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <h2 class="text-base font-semibold text-rose-600 tracking-wide uppercase">Preferences & Vision</h2>
-                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">For Organisers</p>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">What does the future look like? This section details the community's preferences for event timing, size, and format, providing a clear, evidence-based roadmap for event organisers to follow.</p>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Future Vision</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">So where do we go from here? The data shows the community isn't divided; it's sophisticated. There is a clear and nuanced vision for a hybrid future that balances large-scale spectacle with intimate, regular connection.</p>
                 </div>
-
+                <div class="mt-12 bg-stone-100 p-6 rounded-lg text-center">
+                    <p class="text-lg text-stone-700 italic max-w-3xl mx-auto">We've lost our big Burn, communication is scattered, and volunteers are struggling. But the data shows we know exactly what we want. This isn't about mourning what was; it's about building what our community actually needs.</p>
+                </div>
                 <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">At a Glance: Community Priorities</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">This chart consolidates several key questions to provide a clear overview of what the community values most. It's clear that building a strong local community and ensuring accessibility are paramount, far outweighing concerns about official status or event timing.</p>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">This chart consolidates several key questions to provide a clear overview of what the community values most. Building a strong local community and ensuring accessibility are paramount.</p>
                     <div class="mt-6 chart-container-large"><canvas id="prioritiesChart"></canvas></div>
                 </div>
                 
                 <div class="mt-12 bg-stone-100 p-6 sm:p-8 rounded-lg">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Monthly Event Likelihood</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The shoulder seasons of Autumn (Mar-Apr) and Spring (Oct-Nov) are clear favourites, avoiding the peak summer fire risk and deep winter cold. The community shows strong preference for events outside of January and the mid-winter months.</p>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The shoulder seasons of Autumn (Mar-Apr) and Spring (Oct-Nov) are clear favourites, avoiding peak summer fire risk and deep winter cold.</p>
                     <div class="mt-6 chart-container-large"><canvas id="monthlyLikelihoodChart"></canvas></div>
                 </div>
                 
                 <div class="mt-12">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Preferred Long Weekend</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The October Labour Day long weekend is the top choice, aligning with the monthly preference data. However, with 43% stating any long weekend works, there is huge flexibility for a year-round calendar of events.</p>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The October Labour Day long weekend is the top choice, aligning with the monthly preference data. However, with 43% stating any long weekend works, there is huge flexibility.</p>
                     <div class="mt-6 chart-container"><canvas id="timingChart"></canvas></div>
                 </div>
 
                 <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Travel Willingness by Event Size</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">Willingness to travel increases significantly with event size. The sweet spot for a mini-burn is up to 4 hours. For larger, destination-style burns, a travel time of 6 hours or more is widely accepted, greatly expanding the potential search area for a site.</p>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">Willingness to travel increases significantly with event size. The sweet spot for a mini-burn is up to 4 hours, while for larger burns, 6 hours or more is widely accepted.</p>
                     <div class="mt-6 chart-container-large"><canvas id="travelWillingnessChart"></canvas></div>
                 </div>
 
                 <div class="mt-16">
                     <h3 class="text-3xl font-bold text-stone-900 text-center">Ticket Pricing Analysis</h3>
-                    <p class="mt-4 max-w-3xl mx-auto text-center text-lg text-stone-600">The Westerndorp Price Sensitivity Meter helps identify the optimal price range that balances accessibility with perceived event quality. The findings provide a clear financial framework for event planning.</p>
+                    <p class="mt-4 max-w-3xl mx-auto text-center text-lg text-stone-600">The Westerndorp Price Sensitivity Meter helps identify the optimal price range that balances accessibility with perceived event quality.</p>
                     <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="bg-white p-6 rounded-lg shadow-sm border-t-4 border-sky-500">
                             <h4 class="font-semibold text-stone-800">Point of Marginal Cheapness</h4>
                             <p class="text-4xl font-bold text-sky-600 mt-2">$350</p>
-                            <p class="mt-2 text-sm text-stone-600">Below this price, attendees begin to question the event's quality and viability. Represents the minimum price.</p>
+                            <p class="mt-2 text-sm text-stone-600">Below this price, attendees begin to question the event's quality and viability.</p>
                         </div>
                         <div class="price-card p-8 rounded-lg shadow-lg border-t-4 border-amber-500 text-center">
                             <h4 class="font-bold text-xl text-amber-800">Optimal Price Point</h4>
                             <p class="text-6xl font-extrabold text-amber-700 mt-2">$400</p>
-                            <p class="mt-3 text-sm text-amber-900 font-medium">The recommended base ticket price. This is the sweet spot balancing accessibility and value perception.</p>
+                            <p class="mt-3 text-sm text-amber-900 font-medium">The recommended base ticket price, balancing accessibility and value.</p>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm border-t-4 border-rose-500">
                              <h4 class="font-semibold text-stone-800">Point of Marginal Expensiveness</h4>
                             <p class="text-4xl font-bold text-rose-600 mt-2">$450</p>
-                            <p class="mt-2 text-sm text-stone-600">Above this price, cost becomes a significant barrier to attendance for many. Represents the maximum acceptable price.</p>
+                            <p class="mt-2 text-sm text-stone-600">Above this price, cost becomes a significant barrier to attendance for many.</p>
                         </div>
                     </div>
                 </div>
-                 <div class="mt-16 bg-stone-100 p-6 sm:p-8 rounded-lg">
-                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Future Vision & Community Development</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The following sections provide a qualitative analysis of the community's current state, identifying key strengths to build upon, critical gaps to address, and a shared vision for the future.</p>
-                    <div class="mt-12 text-left grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div>
-                            <h4 class="text-lg font-semibold text-stone-800">What's Working Well? (Strengths)</h4>
-                            <p class="mt-2 text-stone-600">Despite organisational challenges, community cohesion is being actively maintained through smaller-scale events and strong interpersonal connections. The community demonstrates remarkable resilience and adaptability.</p>
-                            <ul class="mt-4 space-y-3">
-                                <li><strong class="text-teal-700">Small Burns & Local Events (32%):</strong> Highly valued for accessibility. <em class="text-stone-500">"Small regional events are amazing."</em></li>
-                                <li><strong class="text-teal-700">Community Connection (24%):</strong> Strong interpersonal bonds persist. <em class="text-stone-500">"United community- theme camps coming back to do awesome stuff together."</em></li>
-                                <li><strong class="text-teal-700">Events & Activities (20%):</strong> Regular social gatherings maintain engagement. <em class="text-stone-500">"Frequency of events - the in between things like burning pub and fundraisers."</em></li>
+            </div>
+        </section>
+
+        <section id="resources-recommendations" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-amber-600 tracking-wide uppercase">The Path Forward</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Resources & Recommendations</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">This isn't just data; it's a blueprint. The community has not only identified its challenges but also provided the resources and solutions to overcome them. This final section provides the practical steps for building what's next.</p>
+                </div>
+                <div class="mt-16 bg-stone-100 p-6 sm:p-8 rounded-lg">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Community Resources</h3>
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-stone-900 mb-4">Finding a New Home</h4>
+                            <ul class="space-y-3 text-sm text-stone-700">
+                                <li><strong class="text-stone-800">Top Suggestions:</strong> Glenworth Valley, Dragon Dreaming site (Wee Jasper), Confest site (Woorooma Station).</li>
+                                <li><strong class="text-stone-800">Actionable Leads:</strong> Contacts for properties in Bellingen, Mandalong, and "The Lair".</li>
                             </ul>
                         </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-stone-800">What's Missing? (Gaps)</h4>
-                            <p class="mt-2 text-stone-600">Significant gaps exist in communication, event structure, and culture. There is a strong desire for more robust systems, a clearer event strategy, and a more inclusive, transparent culture.</p>
-                             <ul class="mt-4 space-y-3">
-                                <li><strong class="text-rose-700">Communication & Connection (24%):</strong> Facebook dependence creates information silos. <em class="text-stone-500">"Using Facebook Pages as a primary online hub is a poor substitute for a moderated forum."</em></li>
-                                <li><strong class="text-rose-700">Community Culture & Inclusivity (20%):</strong> Exclusionary dynamics are affecting cohesion. <em class="text-stone-500">"More inclusion and less 'cool camp' vibes."</em></li>
-                                <li><strong class="text-rose-700">Governance & Transparency (12%):</strong> Need for clearer decision-making. <em class="text-stone-500">"We could always improve on transparency, accountability and accessibility."</em></li>
+                        <div class="bg-white p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-stone-900 mb-4">Community Suppliers & Equipment</h4>
+                            <ul class="space-y-3 text-sm text-stone-700">
+                                 <li><strong class="text-stone-800">Sound/AV:</strong> Cody Lawton (Litness Lights), Justin "Cosmos" James (Dynamic Audio Visual).</li>
+                                 <li><strong class="text-stone-800">Maker Spaces:</strong> Newcastle's Sparkhaus and Sydney's RoboDino.</li>
                             </ul>
                         </div>
-                    </div>
-                    <div class="mt-12">
-                        <h4 class="text-lg font-semibold text-stone-800 text-center">What is Our Vision for the Future?</h4>
-                        <p class="mt-2 text-stone-600 text-center">The community's vision is overwhelmingly positive, centred on fostering a more connected, creative, and inclusive environment. The underlying desire is for a "unified community that grows, trusts, and supports each other."</p>
-                        <ul class="mt-4 space-y-3 text-center max-w-2xl mx-auto">
-                            <li><strong class="text-amber-700">Community Building & Connection (36%):</strong> The foremost desire is for strengthened interpersonal bonds.</li>
-                            <li><strong class="text-amber-700">Event Size & Location (28%):</strong> A sophisticated preference for a hybrid model of large and small events.</li>
-                            <li><strong class="text-amber-700">Art & Creative Expression (16%):</strong> Art remains central to the community's identity.</li>
-                        </ul>
+                        <div class="bg-white p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-stone-900 mb-4">Support for Artists & Theme Camps</h4>
+                            <ul class="space-y-3 text-sm text-stone-700">
+                                <li><strong class="text-stone-800">Primary Need:</strong> Increased and more accessible funding.</li>
+                                <li><strong class="text-stone-800">Shared Resources:</strong> Desire for a community "Library of Things".</li>
+                            </ul>
+                        </div>
+                         <div class="bg-white p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-stone-900 mb-4">Potential Community Partners</h4>
+                            <ul class="space-y-3 text-sm text-stone-700">
+                                 <li><strong class="text-stone-800">Festivals:</strong> ConFest, Dragon Dreaming, Modifyre (QLD), Blazing Swan (WA).</li>
+                                 <li><strong class="text-stone-800">Arts/Maker Groups:</strong> Sparkhaus, local Men's Sheds, Newtown Festival.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="mt-16 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
+                <div class="mt-16">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Deeper Insights: Challenges & Opportunities</h3>
-                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">This section explores the detailed feedback from key contributor groups within our community. The insights reveal common themes around sustainability, communication, and the need for better structural support to prevent burnout and foster creativity.</p>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">This section explores the detailed feedback from key contributor groups, revealing common themes around sustainability, communication, and the need for better structural support.</p>
                     <div class="mt-12 space-y-12">
                         <div>
                             <h4 class="text-lg font-semibold text-stone-800">Enhancing the Volunteer Experience</h4>
-                            <p class="mt-2 text-stone-600">Volunteers seek significant improvements in structure, communication, and recognition. There's a strong desire for shorter, manageable shifts and better support systems to prevent burnout.</p>
-                            <ul class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-                                <li><strong class="text-sky-700">Shift Duration & Workload (32%):</strong> <em class="text-stone-500">"Not having too long shifts during the event, max 4 hours at a time."</em></li>
-                                <li><strong class="text-sky-700">Training & Development (28%):</strong> <em class="text-stone-500">"Training for bigger roles... Training off site and support on site."</em></li>
-                                <li><strong class="text-sky-700">Role Clarity & Communication (26%):</strong> <em class="text-stone-500">"More clarity on other people's roles, clarity somewhat on my own role."</em></li>
-                                <li><strong class="text-sky-700">Recognition & Rewards (16%):</strong> <em class="text-stone-500">"Great Schwag and recognition."</em></li>
-                            </ul>
+                            <p class="mt-2 text-stone-600">Volunteers seek shorter, manageable shifts and better support systems to prevent burnout.</p>
                         </div>
                          <hr/>
                         <div>
                             <h4 class="text-lg font-semibold text-stone-800">Theme Camp Challenges</h4>
-                            <p class="mt-2 text-stone-600">Theme camps are under significant strain from workload, financial pressures, and logistics, indicating the current support model is leading to burnout.</p>
-                            <ul class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-                                <li><strong class="text-rose-700">Workload & Resource Distribution (42%):</strong> <em class="text-stone-500">"Core crew doing 80% of the work."</em></li>
-                                <li><strong class="text-rose-700">Financial Challenges (36%):</strong> <em class="text-stone-500">"Unsustainably low grant amounts."</em></li>
-                                <li><strong class="text-rose-700">Logistics & Transportation (30%):</strong> <em class="text-stone-500">"Transport for all the gear is a constant battle."</em></li>
-                                <li><strong class="text-rose-700">Interpersonal Dynamics (24%):</strong> <em class="text-stone-500">"POLITICS. OMG again and again I have seen dreadful behaviour."</em></li>
-                            </ul>
+                            <p class="mt-2 text-stone-600">Theme camps are under significant strain from workload, financial pressures, and logistics.</p>
                         </div>
                          <hr/>
                         <div>
                             <h4 class="text-lg font-semibold text-stone-800">Artist Challenges</h4>
-                            <p class="mt-2 text-stone-600">Artists face significant funding limitations and logistical complexities, leading to personal financial strain that may limit artistic participation.</p>
-                             <ul class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-                                <li><strong class="text-amber-700">Funding & Costs (35%):</strong> <em class="text-stone-500">"The costs easily go over grant budget."</em></li>
-                                <li><strong class="text-amber-700">Transportation & Logistics (32%):</strong> <em class="text-stone-500">"Logistics to move heavy items."</em></li>
-                                <li><strong class="text-amber-700">Site Placement & Installation (24%):</strong> <em class="text-stone-500">"Site placement has been a mess every time."</em></li>
-                                <li><strong class="text-amber-700">Safety & Durability (16%):</strong> <em class="text-stone-500">"Not understanding how rough people will be with it."</em></li>
-                            </ul>
+                            <p class="mt-2 text-stone-600">Artists face significant funding limitations and logistical complexities.</p>
                         </div>
                          <hr/>
                         <div>
                             <h4 class="text-lg font-semibold text-stone-800">Leadership Sustainability</h4>
-                            <p class="mt-2 text-stone-600">Leaders desire more formalised processes, clearer documentation, and a more collaborative approach to enable sustainable community building and prevent burnout.</p>
-                             <ul class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-                                <li><strong class="text-teal-700">Communication & Documentation (24%):</strong> <em class="text-stone-500">"Clarity of communication especially deadlines and requirements."</em></li>
-                                <li><strong class="text-teal-700">Organisational Structure (20%):</strong> <em class="text-stone-500">"Standardized processes. Simple doco for expected tasks and deadlines."</em></li>
-                                <li><strong class="text-teal-700">Volunteer Management (18%):</strong> <em class="text-stone-500">"An easy way for volunteers to sign up for shifts."</em></li>
-                                <li><strong class="text-teal-700">Leadership Culture (16%):</strong> <em class="text-stone-500">"Get rid of the 'Important people'."</em></li>
-                            </ul>
+                            <p class="mt-2 text-stone-600">Leaders desire more formalised processes and clearer documentation to prevent burnout.</p>
                         </div>
                     </div>
                 </div>
@@ -428,10 +451,6 @@
                                     <p class="font-semibold">Implement a central communication platform to serve as a single source of truth.</p>
                                     <p class="text-sm text-stone-600 mt-1"><strong>Rationale:</strong> Reduces reliance on Facebook, which was cited as a major failure and cause of information silos.</p>
                                 </div>
-                                <div class="bg-white p-4 rounded-md shadow-sm">
-                                    <p class="font-semibold">Develop a formal leadership Code of Conduct and provide training opportunities.</p>
-                                    <p class="text-sm text-stone-600 mt-1"><strong>Rationale:</strong> Responds directly to concerns about "egos," negative culture, and provides a framework for accountability.</p>
-                                </div>
                             </div>
                         </div>
                         <div>
@@ -440,10 +459,6 @@
                                 <div class="bg-white p-4 rounded-md shadow-sm">
                                     <p class="font-semibold">Adopt a hybrid event portfolio (one large burn, multiple smaller events).</p>
                                     <p class="text-sm text-stone-600 mt-1"><strong>Rationale:</strong> Satisfies the split community vision, balancing the need for scale with the desire for intimacy and accessibility.</p>
-                                </div>
-                                <div class="bg-white p-4 rounded-md shadow-sm">
-                                    <p class="font-semibold">Prioritise site locations based on travel time appropriate to event size.</p>
-                                    <p class="text-sm text-stone-600 mt-1"><strong>Rationale:</strong> Aligns with travel willingness data, maximising attendance by placing smaller burns closer to population centres.</p>
                                 </div>
                                  <div class="bg-white p-4 rounded-md shadow-sm">
                                     <p class="font-semibold">Design all events with neurodivergent accessibility as a core principle.</p>
@@ -701,6 +716,21 @@
                     },
                     options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
                 });
+
+                 allCharts.physicalAccessibilityChart = new Chart(document.getElementById('physicalAccessibilityChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Stamina/fatigue', 'Chronic condition', 'Mobility', 'Other', 'Seeing', 'Hearing', 'Gripping'],
+                        datasets: [{
+                            label: 'Count',
+                            data: [26, 24, 21, 18, 11, 7, 4],
+                             backgroundColor: [chartColors.sky, chartColors.teal, chartColors.amber, chartColors.rose, chartColors.stone, chartColors.neutral, chartColors.neutral],
+                            borderColor: Object.values(chartBorderColors),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
+                });
                 
                 allCharts.contributionChart = new Chart(document.getElementById('contributionChart'), {
                     type: 'bar',
@@ -717,15 +747,39 @@
                     options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
                 });
 
+                allCharts.skillsChart = new Chart(document.getElementById('skillsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Artistic/Creative', 'Physical Labor/Building', 'Cooking/Hospitality', 'Event Management', 'Leadership/Organisation', 'Technical/Engineering', 'Teaching/Mentoring', 'Safety/Security', 'Medical/First Aid', 'Transportation/Logistics', 'Music/Performance', 'Documentation', 'Financial Resources'],
+                        datasets: [
+                            { label: 'Could lead a team', data: [69, 40, 44, 68, 85, 40, 45, 26, 13, 25, 35, 13, 12], backgroundColor: chartColors.sky },
+                            { label: 'Happy to help', data: [269, 204, 199, 194, 169, 155, 152, 142, 123, 116, 111, 85, 80], backgroundColor: chartColors.teal }
+                        ]
+                    },
+                     options: {
+                        ...defaultChartOptions,
+                        indexAxis: 'y',
+                        scales: { x: { stacked: true }, y: { stacked: true } },
+                        plugins: {
+                            ...defaultChartOptions.plugins,
+                            legend: { display: true, position: 'bottom' },
+                             datalabels: {
+                                color: '#fff',
+                                formatter: (value) => value > 15 ? value : ''
+                            }
+                        }
+                    }
+                });
+
                 allCharts.volunteerChart = new Chart(document.getElementById('volunteerChart'), {
                     type: 'bar',
                     data: {
-                        labels: ['Leave No Trace', 'Gate', 'Greeter', 'Ranger', 'Crew Kitchen', 'Art Dept', 'Medical/First Aid', 'Sound/Music', 'Infrastructure', 'Comms'],
+                        labels: ['Leave No Trace', 'Gate', 'Greeter', 'Ranger', 'Crew Kitchen', 'DPI/Build', 'Art Department', 'Sanitation', 'Traffic', 'Site Management', 'Effigy/Temple builds', 'Medical/First Aid', 'Volunteer Coordination', 'Sanctuary/PEER', 'Admin/Finance', 'Fire Safety (FART)', 'Comms', 'Ice Sales', 'Placement', 'Lost & Found', 'Centre Camp', 'Tech Support', 'Consent Team', 'Legal', 'Participation Station'],
                         datasets: [{
                             label: 'Previous Experience',
-                            data: [164, 139, 129, 98, 77, 61, 43, 39, 36, 29],
-                            backgroundColor: [chartColors.sky, chartColors.teal, chartColors.amber, chartColors.rose, chartColors.stone, chartColors.neutral, chartColors.neutral, chartColors.neutral, chartColors.neutral, chartColors.neutral],
-                            borderColor: Object.values(chartBorderColors),
+                            data: [164, 139, 129, 98, 77, 72, 59, 55, 52, 47, 46, 43, 41, 36, 35, 34, 32, 31, 27, 27, 22, 16, 14, 14, 13],
+                            backgroundColor: chartColors.sky,
+                            borderColor: chartBorderColors.sky,
                             borderWidth: 1
                         }]
                     },
@@ -1079,6 +1133,8 @@
             
             const viewButtons = document.querySelectorAll('.view-nav-button');
             const views = document.querySelectorAll('.view-content');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
 
             function switchView(viewName) {
                 views.forEach(view => {
@@ -1102,6 +1158,21 @@
                 button.addEventListener('click', () => {
                     switchView(button.dataset.view);
                 });
+            });
+
+            // Active nav link scrolling
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
             });
 
             createCharts();
