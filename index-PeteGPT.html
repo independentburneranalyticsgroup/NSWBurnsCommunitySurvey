@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Story: The NSW Burns Community in Transition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -84,9 +84,9 @@
 
 <!--[if gte mso 9]><xml>
 <mso:CustomDocumentProperties>
-<mso:_dlc_DocId msdt:dt="string">3CEWKAJ56SRM-1841924160-116627</mso:_dlc_DocId>
-<mso:_dlc_DocIdItemGuid msdt:dt="string">c9ded1e4-d0d0-4955-826d-28de41e703b5</mso:_dlc_DocIdItemGuid>
-<mso:_dlc_DocIdUrl msdt:dt="string">https://unisyd.sharepoint.com/sites/RP/_layouts/15/DocIdRedir.aspx?ID=3CEWKAJ56SRM-1841924160-116627, 3CEWKAJ56SRM-1841924160-116627</mso:_dlc_DocIdUrl>
+<mso:_dlc_DocId msdt:dt="string">3CEWKAJ56SRM-1841924160-116628</mso:_dlc_DocId>
+<mso:_dlc_DocIdItemGuid msdt:dt="string">448ef822-5f97-4692-ac0e-314c4c674b4f</mso:_dlc_DocIdItemGuid>
+<mso:_dlc_DocIdUrl msdt:dt="string">https://unisyd.sharepoint.com/sites/RP/_layouts/15/DocIdRedir.aspx?ID=3CEWKAJ56SRM-1841924160-116628, 3CEWKAJ56SRM-1841924160-116628</mso:_dlc_DocIdUrl>
 </mso:CustomDocumentProperties>
 </xml><![endif]-->
 </head>
@@ -507,38 +507,47 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Peter Simpson-Young</h3>
+                            <p class="text-sm text-amber-600">Project Lead</p>
                             <p class="mt-2 text-sm text-stone-600">Neuroscientist, research translator, and Bourges Douf co-lead bringing 10 years of Burner wisdom.</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Teresa Trevoire</h3>
+                            <p class="text-sm text-amber-600">Community Relations</p>
                             <p class="mt-2 text-sm text-stone-600">Sexologist and psychotherapist facilitating connection and wellbeing with research-led insight.</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Ariane "Shiny" Blanch</h3>
+                            <p class="text-sm text-amber-600">Data Visualisation</p>
                             <p class="mt-2 text-sm text-stone-600">Physics and IT expert making big data play nicely with humans. "Concerningly Competent."</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Dr Leanna Pugliese</h3>
+                            <p class="text-sm text-amber-600">Community Builder</p>
                             <p class="mt-2 text-sm text-stone-600">Sparkhaus founder and pharmaceutical researcher with a penchant for saying "yes let's do it!"</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Gabe "Doof Daddy" Rey</h3>
+                            <p class="text-sm text-amber-600">Risk & Safety</p>
                             <p class="mt-2 text-sm text-stone-600">Public safety specialist who vibes with eyes closed but always has water, snacks, and hugs.</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Dr Roland Warner</h3>
+                            <p class="text-sm text-amber-600">Medical & Climate</p>
                             <p class="mt-2 text-sm text-stone-600">ICU specialist and climate organiser who's flame resistant and generally enthusiastic.</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Ale Mac</h3>
+                            <p class="text-sm text-amber-600">Psychology & IT</p>
                             <p class="mt-2 text-sm text-stone-600">Psychologist and BM Regional Contact known for being short, talking shit, and IT support.</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Dr Felipe Aires</h3>
+                            <p class="text-sm text-amber-600">Fire Science & Arts</p>
                             <p class="mt-2 text-sm text-stone-600">Bushfire management expert often found dressed as Greta the gremlin in a paddock near you.</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Alicia Dudek</h3>
+                            <p class="text-sm text-amber-600">Design Ethnography</p>
                             <p class="mt-2 text-sm text-stone-600">MycoReality founder finding the hidden patterns in how communities actually work.</p>
                         </div>
                     </div>
@@ -578,19 +587,21 @@
     </footer>
 
     <script>
-        // Function to initialize charts when Chart.js is ready
-        function initializeCharts() {
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js is not loaded');
-                return;
+        document.addEventListener('DOMContentLoaded', function () {
+            // Wait for Chart.js to be fully loaded
+            if (typeof Chart !== 'undefined') {
+                Chart.register(ChartDataLabels);
+            } else {
+                // If Chart.js isn't loaded yet, wait a bit and try again
+                setTimeout(() => {
+                    if (typeof Chart !== 'undefined') {
+                        Chart.register(ChartDataLabels);
+                    } else {
+                        console.error('Chart.js failed to load');
+                        return;
+                    }
+                }, 100);
             }
-            
-            if (typeof ChartDataLabels === 'undefined') {
-                console.error('ChartDataLabels plugin is not loaded');
-                return;
-            }
-            
-            Chart.register(ChartDataLabels);
 
             const chartColors = {
                 amber: 'rgba(217, 119, 6, 0.8)',
@@ -1270,23 +1281,6 @@
             });
 
             createCharts();
-        }
-        
-        // Wait for DOM and scripts to be ready
-        document.addEventListener('DOMContentLoaded', function () {
-            // Try to initialize immediately
-            if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
-                initializeCharts();
-            } else {
-                // If not ready, wait a bit and try again
-                setTimeout(() => {
-                    if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
-                        initializeCharts();
-                    } else {
-                        console.error('Chart.js or ChartDataLabels failed to load');
-                    }
-                }, 500);
-            }
         });
     </script>
 </body>

@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="en-AU" class="scroll-smooth" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<html lang="en-AU" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Story: The NSW Burns Community in Transition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A thematic, single-page scrolling application. The structure is designed for a narrative user journey, starting with foundational data and progressing to strategic insights. The five sections are: 'Who We Are', 'Our Culture & Values', 'Our Capabilities', 'Future Vision', and 'Resources & Recommendations'. This approach allows any user to easily navigate to the content most relevant to them via a sticky navigation bar, providing a more intuitive experience than audience-based tabs. -->
+    <!-- Visualization & Content Choices: Data is presented using Chart.js for interactive visualizations, paired with key insights in text blocks for context. Goals: Inform (Doughnut/Bar charts for demographics/preferences), Compare (Bar/Stacked Bar/Line charts for motivations/skills/priorities), Organize (Clickable cards for Community Personas, structured lists for resources). Interactions include chart tooltips for detail and clickable persona cards to reveal information, making the experience engaging. This approach turns static data into an exploratory tool. Library/Method: Chart.js (Canvas) with chartjs-plugin-datalabels for all charts. HTML/CSS/Tailwind for all layouts and diagrams. Unicode characters for icons. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -81,14 +85,6 @@
             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
     </style>
-
-<!--[if gte mso 9]><xml>
-<mso:CustomDocumentProperties>
-<mso:_dlc_DocId msdt:dt="string">3CEWKAJ56SRM-1841924160-116627</mso:_dlc_DocId>
-<mso:_dlc_DocIdItemGuid msdt:dt="string">c9ded1e4-d0d0-4955-826d-28de41e703b5</mso:_dlc_DocIdItemGuid>
-<mso:_dlc_DocIdUrl msdt:dt="string">https://unisyd.sharepoint.com/sites/RP/_layouts/15/DocIdRedir.aspx?ID=3CEWKAJ56SRM-1841924160-116627, 3CEWKAJ56SRM-1841924160-116627</mso:_dlc_DocIdUrl>
-</mso:CustomDocumentProperties>
-</xml><![endif]-->
 </head>
 <body class="bg-stone-50 text-stone-800">
 
@@ -353,7 +349,7 @@
 
                 <div class="mt-16">
                     <h3 class="text-3xl font-bold text-stone-900 text-center">Ticket Pricing Analysis</h3>
-                    <p class="mt-4 max-w-3xl mx-auto text-center text-lg text-stone-600">The Westendorp Price Sensitivity Meter helps identify the optimal price range that balances accessibility with perceived event quality.</p>
+                    <p class="mt-4 max-w-3xl mx-auto text-center text-lg text-stone-600">The Westerndorp Price Sensitivity Meter helps identify the optimal price range that balances accessibility with perceived event quality.</p>
                     <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="bg-white p-6 rounded-lg shadow-sm border-t-4 border-sky-500">
                             <h4 class="font-semibold text-stone-800">Point of Marginal Cheapness</h4>
@@ -494,69 +490,6 @@
                 </div>
             </div>
         </section>
-
-        <section id="about-ibag" class="py-16 sm:py-24 bg-stone-100">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <h2 class="text-base font-semibold text-amber-600 tracking-wide uppercase">Behind the Data</h2>
-                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">The Independent Burners Analytics Group</p>
-                    <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-500">This report exists because a diverse group of community members came together with a shared belief: that understanding ourselves through data would help us build our future. Meet the volunteers who turned 518 voices into actionable insights.</p>
-                </div>
-
-                <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Peter Simpson-Young</h3>
-                            <p class="mt-2 text-sm text-stone-600">Neuroscientist, research translator, and Bourges Douf co-lead bringing 10 years of Burner wisdom.</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Teresa Trevoire</h3>
-                            <p class="mt-2 text-sm text-stone-600">Sexologist and psychotherapist facilitating connection and wellbeing with research-led insight.</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Ariane "Shiny" Blanch</h3>
-                            <p class="mt-2 text-sm text-stone-600">Physics and IT expert making big data play nicely with humans. "Concerningly Competent."</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Dr Leanna Pugliese</h3>
-                            <p class="mt-2 text-sm text-stone-600">Sparkhaus founder and pharmaceutical researcher with a penchant for saying "yes let's do it!"</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Gabe "Doof Daddy" Rey</h3>
-                            <p class="mt-2 text-sm text-stone-600">Public safety specialist who vibes with eyes closed but always has water, snacks, and hugs.</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Dr Roland Warner</h3>
-                            <p class="mt-2 text-sm text-stone-600">ICU specialist and climate organiser who's flame resistant and generally enthusiastic.</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Ale Mac</h3>
-                            <p class="mt-2 text-sm text-stone-600">Psychologist and BM Regional Contact known for being short, talking shit, and IT support.</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Dr Felipe Aires</h3>
-                            <p class="mt-2 text-sm text-stone-600">Bushfire management expert often found dressed as Greta the gremlin in a paddock near you.</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="font-semibold text-stone-900">Alicia Dudek</h3>
-                            <p class="mt-2 text-sm text-stone-600">MycoReality founder finding the hidden patterns in how communities actually work.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-8 pt-8 border-t border-stone-200">
-                        <p class="text-center text-stone-600">
-                            <span class="font-semibold">Special Thanks:</span> To all 518 community members who shared their time, stories, and vision. To the theme camps, volunteers, and networks who helped spread the survey. To everyone who believes in the power of collective wisdom.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mt-8 text-center">
-                    <p class="text-sm text-stone-500 italic max-w-3xl mx-auto">
-                        The Independent Burners Analytics Group (I-BAG) formed spontaneously from community members with diverse expertise united by a simple belief: communities thrive when they understand themselves. This independence isn't organisational—it's philosophical. We serve no agenda but the community's own voice.
-                    </p>
-                </div>
-            </div>
-        </section>
     </main>
 
     <div id="persona-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50 opacity-0">
@@ -578,18 +511,7 @@
     </footer>
 
     <script>
-        // Function to initialize charts when Chart.js is ready
-        function initializeCharts() {
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js is not loaded');
-                return;
-            }
-            
-            if (typeof ChartDataLabels === 'undefined') {
-                console.error('ChartDataLabels plugin is not loaded');
-                return;
-            }
-            
+        document.addEventListener('DOMContentLoaded', function () {
             Chart.register(ChartDataLabels);
 
             const chartColors = {
@@ -600,7 +522,7 @@
                 stone: 'rgba(120, 113, 108, 0.8)',
                 neutral: 'rgba(214, 211, 209, 0.8)',
                 green: 'rgba(22, 163, 74, 0.8)',
-                lightGreen: 'rgba(34, 197, 94, 0.8)',
+                lightGreen: 'rgba(134, 239, 172, 0.8)',
                 red: 'rgba(220, 38, 38, 0.8)',
                 lightRed: 'rgba(252, 165, 165, 0.8)'
             };
@@ -1081,7 +1003,7 @@
                 },
                  { 
                     name: 'Parent Leaders', 
-                    icon: '&#128106;&#8205;&#128105;&#8205;&#128103;', 
+                    icon: '&#128104;&#8205;&#128105;&#8205;&#128103;', 
                     color: 'sky',
                     age: '35-54 years',
                     percentage: '15% of community',
@@ -1208,22 +1130,6 @@
                     closePersonaModal();
                 }
             });
-
-            // Mobile menu toggle
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            
-            mobileMenuButton.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            // Close mobile menu when clicking a link
-            const mobileNavLinks = mobileMenu.querySelectorAll('a');
-            mobileNavLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                });
-            });
             
             const viewButtons = document.querySelectorAll('.view-nav-button');
             const views = document.querySelectorAll('.view-content');
@@ -1270,23 +1176,6 @@
             });
 
             createCharts();
-        }
-        
-        // Wait for DOM and scripts to be ready
-        document.addEventListener('DOMContentLoaded', function () {
-            // Try to initialize immediately
-            if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
-                initializeCharts();
-            } else {
-                // If not ready, wait a bit and try again
-                setTimeout(() => {
-                    if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
-                        initializeCharts();
-                    } else {
-                        console.error('Chart.js or ChartDataLabels failed to load');
-                    }
-                }, 500);
-            }
         });
     </script>
 </body>
