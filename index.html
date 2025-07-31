@@ -330,7 +330,7 @@
                 <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
                     <div class="mb-6">
                         <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Respondent Locations</h3>
-                        <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">This interactive map shows where survey respondents are located across Australia. Each circle represents a postcode area, with size and color indicating the number of respondents in that area.</p>
+                        <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">This interactive map shows where survey respondents are located across Australia. Each circle represents a Local Government Area (LGA), with size and color indicating the number of respondents in that area. This approach protects privacy by aggregating data at the LGA level rather than showing individual postcodes.</p>
                     </div>
                     <div id="interactive-map" style="height: 600px; width: 100%; border-radius: 8px; overflow: hidden;"></div>
                     <div class="mt-6 text-center text-sm text-stone-500">
@@ -1484,8 +1484,8 @@
                 opacity: 0.3
             }).addTo(map);
 
-            // Load and process the postcode data
-            fetch('postcode_centers.json')
+            // Load and process the LGA data
+            fetch('lga_centers.json')
                 .then(response => response.json())
                 .then(data => {
                     const heatmapData = [];
@@ -1495,25 +1495,25 @@
                     const heatmapGroup = L.layerGroup();
                     const markerGroup = L.layerGroup();
                     
-                    // Process each postcode (data is now an object with postcode keys)
-                    console.log('Processing postcodes, total:', Object.keys(data).length);
-                    Object.keys(data).forEach(postcode => {
-                        const postcodeData = data[postcode];
-                        const centerLat = postcodeData.center_latitude;
-                        const centerLng = postcodeData.center_longitude;
-                        const locations = postcodeData.all_coordinates;
-                        const numLocations = postcodeData.num_locations;
+                    // Process each LGA (data is now an object with LGA keys)
+                    console.log('Processing LGAs, total:', Object.keys(data).length);
+                    Object.keys(data).forEach(lgaName => {
+                        const lgaData = data[lgaName];
+                        const centerLat = lgaData.center_latitude;
+                        const centerLng = lgaData.center_longitude;
+                        const locations = lgaData.all_coordinates;
+                        const numPostcodes = lgaData.num_postcodes;
                         
-                        console.log(`Processing postcode ${postcode}:`, {
+                        console.log(`Processing LGA ${lgaName}:`, {
                             hasCenter: !!(centerLat && centerLng),
                             centerLat: centerLat,
                             centerLng: centerLng,
-                            locationsCount: numLocations
+                            postcodesCount: numPostcodes
                         });
                         
                         if (centerLat && centerLng) {
                             // Add heatmap point with intensity based on number of respondents
-                            const respondentCount = postcodeData.respondent_count || numLocations;
+                            const respondentCount = lgaData.respondent_count || numPostcodes;
                             const intensity = Math.min(respondentCount * 2, 15); // Higher cap for respondent density
                             const heatmapPoint = {
                                 lat: centerLat,
@@ -1521,9 +1521,9 @@
                                 value: intensity
                             };
                             heatmapData.push(heatmapPoint);
-                            console.log(`Added heatmap point for postcode ${postcode}: ${intensity} intensity (${respondentCount} respondents) at ${centerLat}, ${centerLng}`);
+                            console.log(`Added heatmap point for LGA ${lgaName}: ${intensity} intensity (${respondentCount} respondents) at ${centerLat}, ${centerLng}`);
                             
-                            // Create marker for each postcode
+                            // Create marker for each LGA
                             const marker = L.circleMarker([centerLat, centerLng], {
                                 radius: Math.min(respondentCount * 4 + 8, 35), // Larger radius based on respondents
                                 fillColor: getColorByCount(respondentCount),
@@ -1533,15 +1533,18 @@
                                 fillOpacity: 0.7
                             });
                             
-                            // Add popup with postcode information
+                            // Add popup with LGA information
                             marker.bindPopup(`
-                                <div style="min-width: 200px;">
-                                    <h4 style="margin: 0 0 8px 0; color: #333;">Postcode ${postcode}</h4>
+                                <div style="min-width: 250px;">
+                                    <h4 style="margin: 0 0 8px 0; color: #333;">LGA: ${lgaName}</h4>
                                     <p style="margin: 0 0 8px 0; color: #666;">
-                                        <strong>${respondentCount}</strong> respondents in this postcode
+                                        <strong>${respondentCount}</strong> respondents in this area
                                     </p>
                                     <p style="margin: 0 0 4px 0; color: #666;">
-                                        <strong>${numLocations}</strong> locations mapped
+                                        <strong>${numPostcodes}</strong> postcodes covered
+                                    </p>
+                                    <p style="margin: 0 0 4px 0; color: #666;">
+                                        <strong>State:</strong> ${lgaData.state}
                                     </p>
                                     <p style="margin: 0; font-size: 0.9em; color: #888;">
                                         Center: ${centerLat.toFixed(4)}, ${centerLng.toFixed(4)}
@@ -1590,11 +1593,11 @@
                     let totalWeightedLng = 0;
                     let totalRespondents = 0;
                     
-                    Object.keys(data).forEach(postcode => {
-                        const postcodeData = data[postcode];
-                        const respondentCount = postcodeData.respondent_count || 0;
-                        const centerLat = postcodeData.center_latitude;
-                        const centerLng = postcodeData.center_longitude;
+                    Object.keys(data).forEach(lgaName => {
+                        const lgaData = data[lgaName];
+                        const respondentCount = lgaData.respondent_count || 0;
+                        const centerLat = lgaData.center_latitude;
+                        const centerLng = lgaData.center_longitude;
                         
                         if (centerLat && centerLng && respondentCount > 0) {
                             totalWeightedLat += centerLat * respondentCount;
@@ -1644,7 +1647,7 @@
                     legend.onAdd = function() {
                         const div = L.DomUtil.create('div', 'legend');
                         div.innerHTML = `
-                            <h4 style="margin: 0 0 8px 0;">Respondent Density</h4>
+                            <h4 style="margin: 0 0 8px 0;">Respondent Density by LGA</h4>
                             <div class="legend-item">
                                 <div class="legend-color" style="background: #00ff00;"></div>
                                 <span>Low (1 respondent)</span>
@@ -1675,7 +1678,7 @@
                     };
                     legend.addTo(map);
                     
-                    console.log(`Loaded ${Object.keys(data).length} postcodes with ${markers.length} markers`);
+                    console.log(`Loaded ${Object.keys(data).length} LGAs with ${markers.length} markers`);
                 })
                 .catch(error => {
                     console.error('Error loading postcode data:', error);
