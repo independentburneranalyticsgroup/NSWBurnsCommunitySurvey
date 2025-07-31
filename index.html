@@ -149,54 +149,45 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Peter Simpson-Young</h3>
-                            <p class="text-sm text-amber-600 font-medium">Project Lead</p>
                             <p class="mt-2 text-sm text-stone-600">Background in neuroscience and philosophy; currently works in research translation strategy. Co-leads the Bourges Douf theme camp.</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Teresa Trevoire</h3>
-                            <p class="text-sm text-amber-600 font-medium">Community Relations</p>
                             <p class="mt-2 text-sm text-stone-600">Background as a Sexologist, Psychotherapist, and Communications Strategist. Leads the Garden of Squirting Nymphs theme camp.</p>
                             <p class="mt-2 text-xs text-stone-500"><strong>COI:</strong> SBA membership sub committee, Garden of Squirting Nymphs lead, professional counselling practice</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Ariane "Shiny" Blanch</h3>
-                            <p class="text-sm text-amber-600 font-medium">Data Visualisation</p>
                             <p class="mt-2 text-sm text-stone-600">Background in physics, medical research, and IT with expertise in data integration and visualisation.</p>
                             <p class="mt-2 text-xs text-stone-500"><strong>COI:</strong> Burning Man Regional Contact, Former Sunburnt Events Director, Former BOSS Co-Chair</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Dr Leanna Pugliese</h3>
-                            <p class="text-sm text-amber-600 font-medium">Community Builder</p>
                             <p class="mt-2 text-sm text-stone-600">Doctor of Pharmacy and Investigational Medicines specialist. Founder and Director of Sparkhaus Studio Makerspace.</p>
                             <p class="mt-2 text-xs text-stone-500"><strong>COI:</strong> Sunburnt Arts Director (acting), BM Regional Contact, BoNZA co-producer, former BOSS director/cofounder, former Burning Seed Town Councillor, Restructure team member 2019-2024</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Gabe "Doof Daddy" Rey</h3>
-                            <p class="text-sm text-amber-600 font-medium">Risk & Safety</p>
                             <p class="mt-2 text-sm text-stone-600">Risk and Public Safety Investigations Officer for the NSW Government with degrees in Human Geography, Public Safety, and Psychology.</p>
                             <p class="mt-2 text-xs text-stone-500"><strong>COI:</strong> Sunburnt Arts Director (acting)</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Dr Roland Warner</h3>
-                            <p class="text-sm text-amber-600 font-medium">Data Analysis</p>
                             <p class="mt-2 text-sm text-stone-600">ICU specialist and climate organiser with an interest in using data for event planning.</p>
                             <p class="mt-2 text-xs text-stone-500"><strong>COI:</strong> Embers 2025 organiser</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Ale Mac</h3>
-                            <p class="text-sm text-amber-600 font-medium">Analysis & Support</p>
                             <p class="mt-2 text-sm text-stone-600">Background as a Psychologist with experience in IT support.</p>
                             <p class="mt-2 text-xs text-stone-500"><strong>COI:</strong> BM Regional Contact Sydney, Embers 2025 organiser</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Dr Felipe Aires</h3>
-                            <p class="text-sm text-amber-600 font-medium">Data Analysis</p>
                             <p class="mt-2 text-sm text-stone-600">Background in Fire Science, Knowledge Management, and Bushfire Management.</p>
                             <p class="mt-2 text-xs text-stone-500"><strong>COI:</strong> Embers 2025 organiser, Ex-SBE director</p>
                         </div>
                         <div class="text-center">
                             <h3 class="font-semibold text-stone-900">Alicia Dudek</h3>
-                            <p class="text-sm text-amber-600 font-medium">Qualitative Analysis</p>
                             <p class="mt-2 text-sm text-stone-600">Specialist in Design Ethnography and founder of MycoReality.</p>
                         </div>
                     </div>
@@ -925,7 +916,7 @@
                     options: {
                         ...defaultChartOptions,
                         indexAxis: 'y',
-                        scales: { x: { stacked: true, ticks: { callback: (value) => value + '%' } }, y: { stacked: true } },
+                        scales: { x: { stacked: true, max: 100, ticks: { callback: (value) => value + '%' } }, y: { stacked: true } },
                         plugins: {
                             ...defaultChartOptions.plugins,
                             legend: { display: true, position: 'bottom' },

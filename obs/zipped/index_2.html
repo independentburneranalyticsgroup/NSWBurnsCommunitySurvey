@@ -815,7 +815,7 @@
                     options: {
                         ...defaultChartOptions,
                         indexAxis: 'y',
-                        scales: { x: { stacked: true, ticks: { callback: (value) => value + '%' } }, y: { stacked: true } },
+                        scales: { x: { stacked: true, max: 100, ticks: { callback: (value) => value + '%' } }, y: { stacked: true } },
                         plugins: {
                             ...defaultChartOptions.plugins,
                             legend: { display: true, position: 'bottom' },
