@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0" defer></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -88,6 +90,35 @@
         .modal-content {
             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+        .weighted-center-marker {
+            z-index: 1000 !important;
+        }
+        .weighted-center-marker div {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 
 <!--[if gte mso 9]><xml>
@@ -109,6 +140,7 @@
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="#who-we-are" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Who We Are</a>
+                        <a href="#geographic-distribution" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Geographic Distribution</a>
                         <a href="#our-culture" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Culture & Values</a>
                         <a href="#our-capabilities" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Capabilities</a>
                         <a href="#future-vision" class="nav-link text-stone-600 hover:text-amber-600 px-1 py-2 border-b-2 border-transparent text-sm font-medium">Future Preferences</a>
@@ -128,6 +160,7 @@
         <div id="mobile-menu" class="md:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#who-we-are" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Who We Are</a>
+                <a href="#geographic-distribution" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Geographic Distribution</a>
                 <a href="#our-culture" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Culture & Values</a>
                 <a href="#our-capabilities" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Capabilities</a>
                 <a href="#future-vision" class="nav-link text-stone-600 hover:text-amber-600 block px-3 py-2 rounded-md text-base font-medium">Future Preferences</a>
@@ -281,6 +314,27 @@
                              <p class="mt-2 text-sm text-stone-600 text-center">Of those with children, the breakdown of whether they bring them.</p>
                              <div class="mt-4 chart-container"><canvas id="bringKidsChart"></canvas></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="geographic-distribution" class="py-16 sm:py-24 bg-stone-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-amber-600 tracking-wide uppercase">Geographic Analysis</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Geographic Distribution</p>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">Interactive heatmap showing the geographic distribution of survey respondents across Australia, with postcode-level clustering and density visualization.</p>
+                </div>
+                
+                <div class="mt-12 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
+                    <div class="mb-6">
+                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Respondent Locations</h3>
+                        <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">This interactive map shows where survey respondents are located across Australia. Each circle represents a postcode area, with size and color indicating the number of respondents in that area.</p>
+                    </div>
+                    <div id="interactive-map" style="height: 600px; width: 100%; border-radius: 8px; overflow: hidden;"></div>
+                    <div class="mt-6 text-center text-sm text-stone-500">
+                        <p>Click on any circle to see detailed information about that postcode area.</p>
                     </div>
                 </div>
             </div>
@@ -1403,6 +1457,258 @@
             createCharts();
         }
         
+        // Initialize the interactive map
+        function initializeMap() {
+            if (typeof L === 'undefined') {
+                console.error('Leaflet is not loaded');
+                return;
+            }
+            
+            const mapContainer = document.getElementById('interactive-map');
+            if (!mapContainer) {
+                console.error('Map container not found');
+                return;
+            }
+            
+            // Initialize the map centered on Australia
+            const map = L.map('interactive-map').setView([-25.2744, 133.7751], 5);
+
+            // Add satellite tile layer
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }).addTo(map);
+
+            // Add a subtle street overlay for context
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                opacity: 0.3
+            }).addTo(map);
+
+            // Load and process the postcode data
+            fetch('postcode_centers.json')
+                .then(response => response.json())
+                .then(data => {
+                    const heatmapData = [];
+                    const markers = [];
+                    
+                    // Create separate layer groups
+                    const heatmapGroup = L.layerGroup();
+                    const markerGroup = L.layerGroup();
+                    
+                    // Process each postcode (data is now an object with postcode keys)
+                    console.log('Processing postcodes, total:', Object.keys(data).length);
+                    Object.keys(data).forEach(postcode => {
+                        const postcodeData = data[postcode];
+                        const centerLat = postcodeData.center_latitude;
+                        const centerLng = postcodeData.center_longitude;
+                        const locations = postcodeData.all_coordinates;
+                        const numLocations = postcodeData.num_locations;
+                        
+                        console.log(`Processing postcode ${postcode}:`, {
+                            hasCenter: !!(centerLat && centerLng),
+                            centerLat: centerLat,
+                            centerLng: centerLng,
+                            locationsCount: numLocations
+                        });
+                        
+                        if (centerLat && centerLng) {
+                            // Add heatmap point with intensity based on number of respondents
+                            const respondentCount = postcodeData.respondent_count || numLocations;
+                            const intensity = Math.min(respondentCount * 2, 15); // Higher cap for respondent density
+                            const heatmapPoint = {
+                                lat: centerLat,
+                                lng: centerLng,
+                                value: intensity
+                            };
+                            heatmapData.push(heatmapPoint);
+                            console.log(`Added heatmap point for postcode ${postcode}: ${intensity} intensity (${respondentCount} respondents) at ${centerLat}, ${centerLng}`);
+                            
+                            // Create marker for each postcode
+                            const marker = L.circleMarker([centerLat, centerLng], {
+                                radius: Math.min(respondentCount * 4 + 8, 35), // Larger radius based on respondents
+                                fillColor: getColorByCount(respondentCount),
+                                color: '#fff',
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.7
+                            });
+                            
+                            // Add popup with postcode information
+                            marker.bindPopup(`
+                                <div style="min-width: 200px;">
+                                    <h4 style="margin: 0 0 8px 0; color: #333;">Postcode ${postcode}</h4>
+                                    <p style="margin: 0 0 8px 0; color: #666;">
+                                        <strong>${respondentCount}</strong> respondents in this postcode
+                                    </p>
+                                    <p style="margin: 0 0 4px 0; color: #666;">
+                                        <strong>${numLocations}</strong> locations mapped
+                                    </p>
+                                    <p style="margin: 0; font-size: 0.9em; color: #888;">
+                                        Center: ${centerLat.toFixed(4)}, ${centerLng.toFixed(4)}
+                                    </p>
+                                </div>
+                            `);
+                            
+                            markers.push(marker);
+                            marker.addTo(markerGroup);
+                        }
+                    });
+                    
+                    // Add heatmap layer using circle markers instead
+                    console.log('Adding heatmap data:', heatmapData.length, 'points');
+                    console.log('Sample heatmap data:', heatmapData.slice(0, 3));
+                    heatmapData.forEach(point => {
+                        const intensity = point.value / 10; // Normalize to 0-1
+                        const radius = Math.max(8, Math.min(30, point.value * 4));
+                        const color = getHeatmapColor(intensity);
+                        
+                        const heatmapMarker = L.circleMarker([point.lat, point.lng], {
+                            radius: radius,
+                            fillColor: color,
+                            color: '#fff',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.7
+                        });
+                        
+                        // Add popup for heatmap points
+                        heatmapMarker.bindPopup(`
+                            <div style="min-width: 150px;">
+                                <h4 style="margin: 0 0 8px 0; color: #333;">Heatmap Point</h4>
+                                <p style="margin: 0; color: #666;">
+                                    <strong>Intensity:</strong> ${point.value.toFixed(1)}<br>
+                                    <strong>Location:</strong> ${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}
+                                </p>
+                            </div>
+                        `);
+                        
+                        heatmapMarker.addTo(heatmapGroup);
+                    });
+                    
+                    // Calculate weighted center of all respondents
+                    let totalWeightedLat = 0;
+                    let totalWeightedLng = 0;
+                    let totalRespondents = 0;
+                    
+                    Object.keys(data).forEach(postcode => {
+                        const postcodeData = data[postcode];
+                        const respondentCount = postcodeData.respondent_count || 0;
+                        const centerLat = postcodeData.center_latitude;
+                        const centerLng = postcodeData.center_longitude;
+                        
+                        if (centerLat && centerLng && respondentCount > 0) {
+                            totalWeightedLat += centerLat * respondentCount;
+                            totalWeightedLng += centerLng * respondentCount;
+                            totalRespondents += respondentCount;
+                        }
+                    });
+                    
+                    const weightedCenterLat = totalWeightedLat / totalRespondents;
+                    const weightedCenterLng = totalWeightedLng / totalRespondents;
+                    
+                    console.log(`Weighted center of all ${totalRespondents} respondents: (${weightedCenterLat.toFixed(4)}, ${weightedCenterLng.toFixed(4)})`);
+                    
+                    // Add weighted center marker with X
+                    const centerMarker = L.marker([weightedCenterLat, weightedCenterLng], {
+                        icon: L.divIcon({
+                            className: 'weighted-center-marker',
+                            html: '<div style="background: #ff0000; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">X</div>',
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15]
+                        })
+                    });
+                    
+                    centerMarker.bindPopup(`
+                        <div style="min-width: 250px;">
+                            <h4 style="margin: 0 0 8px 0; color: #333;">Community Geographic Center</h4>
+                            <p style="margin: 0 0 8px 0; color: #666;">
+                                <strong>Weighted center</strong> of all ${totalRespondents} survey respondents
+                            </p>
+                            <p style="margin: 0 0 4px 0; color: #666;">
+                                <strong>Coordinates:</strong> ${weightedCenterLat.toFixed(4)}, ${weightedCenterLng.toFixed(4)}
+                            </p>
+                            <p style="margin: 0; font-size: 0.9em; color: #888;">
+                                This point represents the geographic center of your community, weighted by the number of respondents in each postcode area.
+                            </p>
+                        </div>
+                    `);
+                    
+                    centerMarker.addTo(map);
+                    
+                    // Add layer groups to map
+                    heatmapGroup.addTo(map);
+                    markerGroup.addTo(map);
+                    
+                    // Add legend
+                    const legend = L.control({position: 'bottomright'});
+                    legend.onAdd = function() {
+                        const div = L.DomUtil.create('div', 'legend');
+                        div.innerHTML = `
+                            <h4 style="margin: 0 0 8px 0;">Respondent Density</h4>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #00ff00;"></div>
+                                <span>Low (1 respondent)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ffff00;"></div>
+                                <span>Medium (2-3 respondents)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ff8000;"></div>
+                                <span>High (4-6 respondents)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ff4000;"></div>
+                                <span>Very High (7-10 respondents)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ff0000;"></div>
+                                <span>Extreme (10+ respondents)</span>
+                            </div>
+                            <hr style="margin: 8px 0; border: none; border-top: 1px solid #ccc;">
+                            <div class="legend-item">
+                                <div style="width: 20px; height: 20px; margin-right: 8px; background: #ff0000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 2px solid white;">X</div>
+                                <span>Community Center (${totalRespondents} respondents)</span>
+                            </div>
+                        `;
+                        return div;
+                    };
+                    legend.addTo(map);
+                    
+                    console.log(`Loaded ${Object.keys(data).length} postcodes with ${markers.length} markers`);
+                })
+                .catch(error => {
+                    console.error('Error loading postcode data:', error);
+                    // Add a fallback message
+                    mapContainer.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f8f9fa; border-radius: 8px;">
+                            <div style="text-align: center; color: #666;">
+                                <h4>Map Loading...</h4>
+                                <p>If the map doesn't load, please ensure postcode_centers.json is available.</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            
+            function getColorByCount(count) {
+                // Color coding based on respondent count for density visualization
+                if (count <= 1) return '#00ff00';      // Green - Low density
+                if (count <= 3) return '#ffff00';      // Yellow - Medium-low density
+                if (count <= 6) return '#ff8000';      // Orange - Medium-high density
+                if (count <= 10) return '#ff4000';     // Red-orange - High density
+                return '#ff0000';                       // Red - Very high density
+            }
+            
+            function getHeatmapColor(intensity) {
+                // Create a heatmap color gradient with more vibrant colors
+                if (intensity <= 0.2) return '#00ff00';      // Bright Green
+                if (intensity <= 0.4) return '#ffff00';      // Bright Yellow
+                if (intensity <= 0.6) return '#ff8000';      // Orange
+                if (intensity <= 0.8) return '#ff4000';      // Red-orange
+                return '#ff0000';                             // Bright Red
+            }
+        }
+        
         // Wait for DOM and scripts to be ready
         document.addEventListener('DOMContentLoaded', function () {
             // Try to initialize immediately
@@ -1418,7 +1724,17 @@
                     }
                 }, 500);
             }
+            
+            // Initialize map after a delay to ensure Leaflet is loaded
+            setTimeout(() => {
+                if (typeof L !== 'undefined') {
+                    initializeMap();
+                } else {
+                    console.error('Leaflet failed to load');
+                }
+            }, 1000);
         });
     </script>
 </body>
 </html>
+ 

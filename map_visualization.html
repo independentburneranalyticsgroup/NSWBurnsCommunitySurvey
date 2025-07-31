@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSW Burns Survey - Postcode Heatmap</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .map-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        .map-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .map-title h3 {
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .map-title p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+    </style>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:_dlc_DocId msdt:dt="string">3CEWKAJ56SRM-1841924160-116689</mso:_dlc_DocId>
+<mso:_dlc_DocIdItemGuid msdt:dt="string">14064cb5-20f1-4f9f-a436-f90dbf327ec4</mso:_dlc_DocIdItemGuid>
+<mso:_dlc_DocIdUrl msdt:dt="string">https://unisyd.sharepoint.com/sites/RP/_layouts/15/DocIdRedir.aspx?ID=3CEWKAJ56SRM-1841924160-116689, 3CEWKAJ56SRM-1841924160-116689</mso:_dlc_DocIdUrl>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+<body>
+    <div class="map-container">
+        <div class="map-title">
+            <h3>NSW Burns Community Survey - Geographic Distribution</h3>
+            <p>Interactive heatmap showing respondent locations across Australia</p>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        // Initialize the map centered on Australia
+        const map = L.map('map').setView([-25.2744, 133.7751], 5);
+
+        // Add satellite tile layer
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }).addTo(map);
+
+        // Add a subtle street overlay for context
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            opacity: 0.3
+        }).addTo(map);
+
+        // Load and process the postcode data
+        fetch('postcode_centers.json')
+            .then(response => response.json())
+            .then(data => {
+                const heatmapData = [];
+                const markers = [];
+                
+                // Process each postcode
+                Object.keys(data).forEach(postcode => {
+                    const postcodeData = data[postcode];
+                    const center = postcodeData.center;
+                    const locations = postcodeData.locations;
+                    
+                    if (center && center.lat && center.lng) {
+                        // Add heatmap point with intensity based on number of locations
+                        heatmapData.push({
+                            lat: center.lat,
+                            lng: center.lng,
+                            value: Math.min(locations.length * 2, 10) // Cap intensity at 10
+                        });
+                        
+                        // Create marker for each postcode
+                        const marker = L.circleMarker([center.lat, center.lng], {
+                            radius: Math.min(locations.length * 3 + 5, 25),
+                            fillColor: getColorByCount(locations.length),
+                            color: '#fff',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.7
+                        });
+                        
+                        // Add popup with postcode information
+                        marker.bindPopup(`
+                            <div style="min-width: 200px;">
+                                <h4 style="margin: 0 0 8px 0; color: #333;">Postcode ${postcode}</h4>
+                                <p style="margin: 0 0 8px 0; color: #666;">
+                                    <strong>${locations.length}</strong> locations in this postcode
+                                </p>
+                                <p style="margin: 0; font-size: 0.9em; color: #888;">
+                                    Center: ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}
+                                </p>
+                            </div>
+                        `);
+                        
+                        markers.push(marker);
+                        marker.addTo(map);
+                    }
+                });
+                
+                // Add heatmap layer
+                const heatmapLayer = L.heatLayer(heatmapData, {
+                    radius: 25,
+                    blur: 15,
+                    maxZoom: 10,
+                    gradient: {
+                        0.0: '#00ff00',
+                        0.2: '#ffff00',
+                        0.4: '#ff8000',
+                        0.6: '#ff4000',
+                        0.8: '#ff0000',
+                        1.0: '#800000'
+                    }
+                }).addTo(map);
+                
+                // Add legend
+                const legend = L.control({position: 'bottomright'});
+                legend.onAdd = function() {
+                    const div = L.DomUtil.create('div', 'legend');
+                    div.innerHTML = `
+                        <h4 style="margin: 0 0 8px 0;">Respondent Density</h4>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00ff00;"></div>
+                            <span>Low (1-2 locations)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffff00;"></div>
+                            <span>Medium (3-5 locations)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff8000;"></div>
+                            <span>High (6-10 locations)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff0000;"></div>
+                            <span>Very High (10+ locations)</span>
+                        </div>
+                    `;
+                    return div;
+                };
+                legend.addTo(map);
+                
+                console.log(`Loaded ${Object.keys(data).length} postcodes with ${markers.length} markers`);
+            })
+            .catch(error => {
+                console.error('Error loading postcode data:', error);
+                // Add a fallback message
+                const mapDiv = document.getElementById('map');
+                mapDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f8f9fa; border-radius: 8px;">
+                        <div style="text-align: center; color: #666;">
+                            <h4>Map Loading...</h4>
+                            <p>If the map doesn't load, please ensure postcode_centers.json is available.</p>
+                        </div>
+                    </div>
+                `;
+            });
+        
+        function getColorByCount(count) {
+            if (count <= 2) return '#00ff00';      // Green
+            if (count <= 5) return '#ffff00';      // Yellow
+            if (count <= 10) return '#ff8000';     // Orange
+            return '#ff0000';                       // Red
+        }
+    </script>
+</body>
+</html> 

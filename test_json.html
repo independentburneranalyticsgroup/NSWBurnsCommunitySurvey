@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <title>JSON Test</title>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:_dlc_DocId msdt:dt="string">3CEWKAJ56SRM-1841924160-116691</mso:_dlc_DocId>
+<mso:_dlc_DocIdItemGuid msdt:dt="string">526f5809-1ab7-40fe-a3a5-ce0c04693c7a</mso:_dlc_DocIdItemGuid>
+<mso:_dlc_DocIdUrl msdt:dt="string">https://unisyd.sharepoint.com/sites/RP/_layouts/15/DocIdRedir.aspx?ID=3CEWKAJ56SRM-1841924160-116691, 3CEWKAJ56SRM-1841924160-116691</mso:_dlc_DocIdUrl>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+<body>
+    <h1>JSON Data Test</h1>
+    <div id="output"></div>
+    
+    <script>
+        fetch('postcode_centers.json')
+            .then(response => response.json())
+            .then(data => {
+                const output = document.getElementById('output');
+                const postcodes = Object.keys(data);
+                
+                output.innerHTML = `
+                    <h2>JSON Data Analysis</h2>
+                    <p><strong>Total postcodes:</strong> ${postcodes.length}</p>
+                    
+                    <h3>Sample Postcode Data:</h3>
+                    <pre>${JSON.stringify(data[postcodes[0]], null, 2)}</pre>
+                    
+                    <h3>Center Coordinates Check:</h3>
+                    <ul>
+                        ${postcodes.slice(0, 5).map(postcode => {
+                            const postcodeData = data[postcode];
+                            const center = postcodeData.center;
+                            return `<li>Postcode ${postcode}: 
+                                Center exists: ${!!center}, 
+                                Lat: ${center?.lat}, 
+                                Lng: ${center?.lng}, 
+                                Locations: ${postcodeData.locations?.length}</li>`;
+                        }).join('')}
+                    </ul>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('output').innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+    </script>
+</body>
+</html> 

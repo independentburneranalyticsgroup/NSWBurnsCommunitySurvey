@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Test</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+        .debug {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:_dlc_DocId msdt:dt="string">3CEWKAJ56SRM-1841924160-116690</mso:_dlc_DocId>
+<mso:_dlc_DocIdItemGuid msdt:dt="string">b3e539e1-f3a9-4035-aae2-213af0ce6b82</mso:_dlc_DocIdItemGuid>
+<mso:_dlc_DocIdUrl msdt:dt="string">https://unisyd.sharepoint.com/sites/RP/_layouts/15/DocIdRedir.aspx?ID=3CEWKAJ56SRM-1841924160-116690, 3CEWKAJ56SRM-1841924160-116690</mso:_dlc_DocIdUrl>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+<body>
+    <h1>Map Test</h1>
+    <div id="debug" class="debug"></div>
+    <div id="map"></div>
+
+    <script>
+        const debug = document.getElementById('debug');
+        
+        function log(message) {
+            debug.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        log('Starting map test...');
+        
+        // Check if Leaflet is loaded
+        if (typeof L === 'undefined') {
+            log('ERROR: Leaflet not loaded');
+        } else {
+            log('✓ Leaflet loaded successfully');
+        }
+        
+        // Check if heat plugin is loaded
+        if (typeof L.heatLayer === 'undefined') {
+            log('ERROR: Leaflet heat plugin not loaded');
+        } else {
+            log('✓ Leaflet heat plugin loaded successfully');
+        }
+        
+        // Initialize map
+        try {
+            const map = L.map('map').setView([-25.2744, 133.7751], 5);
+            log('✓ Map initialized');
+            
+            // Add tile layer
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri'
+            }).addTo(map);
+            log('✓ Tile layer added');
+            
+            // Test loading JSON
+            fetch('postcode_centers.json')
+                .then(response => {
+                    log('✓ JSON fetch response received');
+                    return response.json();
+                })
+                .then(data => {
+                    log('✓ JSON parsed successfully');
+                    log(`Found ${Object.keys(data).length} postcodes`);
+                    
+                    // Test with first few postcodes
+                    const testData = [];
+                    let count = 0;
+                    Object.keys(data).forEach(postcode => {
+                        if (count < 5) {
+                            const postcodeData = data[postcode];
+                            const center = postcodeData.center;
+                            if (center && center.lat && center.lng) {
+                                testData.push({
+                                    lat: center.lat,
+                                    lng: center.lng,
+                                    value: 5
+                                });
+                                log(`Added postcode ${postcode}: ${center.lat}, ${center.lng}`);
+                            }
+                        }
+                        count++;
+                    });
+                    
+                    // Add heatmap
+                    const heatmapLayer = L.heatLayer(testData, {
+                        radius: 25,
+                        blur: 15
+                    }).addTo(map);
+                    log('✓ Heatmap layer added');
+                    
+                })
+                .catch(error => {
+                    log('ERROR loading JSON: ' + error.message);
+                });
+                
+        } catch (error) {
+            log('ERROR initializing map: ' + error.message);
+        }
+    </script>
+</body>
+</html> 
