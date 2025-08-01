@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="en-AU" class="scroll-smooth" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B4V82DTKP6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B4V82DTKP6', {
+    page_title: 'NSW Burns Community Survey Results',
+    custom_map: {
+      'custom_parameter_1': 'section_name',
+      'custom_parameter_2': 'interaction_type',
+      'custom_parameter_3': 'chart_name',
+      'custom_parameter_4': 'persona_name'
+    }
+  });
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NSW Burns Community Survey Results</title>
@@ -273,26 +290,10 @@
                     <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-500">This section details the demographic data of the survey respondents, including age, location, event experience, and parental status.</p>
                 </div>
 
-                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-                    <div>
-                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900">Age Distribution</h3>
-                        <p class="mt-3 text-base text-stone-600">The largest age group of respondents is 35-54, accounting for 73% of the total.</p>
-                        <div class="mt-6 chart-container"><canvas id="ageChart"></canvas></div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl sm:text-2xl font-bold text-stone-900">Geographic Distribution</h3>
-                        <p class="mt-3 text-base text-stone-600">The majority of respondents reside in NSW, with representation from other states, primarily Victoria and the ACT.</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-                            <div>
-                                <h4 class="text-lg font-semibold text-center">By State</h4>
-                                <div class="mt-2 chart-container h-64"><canvas id="locationStatesChart"></canvas></div>
-                            </div>
-                             <div>
-                                <h4 class="text-lg font-semibold text-center">By NSW Region</h4>
-                                <div class="mt-2 chart-container h-64"><canvas id="locationClustersChart"></canvas></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mt-16">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Age Distribution</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The largest age group of respondents is 35-54, accounting for 73% of the total.</p>
+                    <div class="mt-6 chart-container max-w-2xl mx-auto"><canvas id="ageChart"></canvas></div>
                 </div>
                 <div class="mt-16">
                     <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">Event Experience</h3>
@@ -334,8 +335,14 @@
                     </div>
                     <div id="interactive-map" style="height: 600px; width: 100%; border-radius: 8px; overflow: hidden;"></div>
                     <div class="mt-6 text-center text-sm text-stone-500">
-                        <p>Click on any circle to see detailed information about that postcode area.</p>
+                        <p>Click on any circle to see detailed information about that LGA area.</p>
                     </div>
+                </div>
+                
+                <div class="mt-12 bg-stone-100 p-6 sm:p-8 rounded-lg">
+                    <h3 class="text-xl sm:text-2xl font-bold text-stone-900 text-center">State Distribution</h3>
+                    <p class="mt-3 text-base text-stone-600 text-center max-w-3xl mx-auto">The majority of respondents reside in NSW, with representation from other states, primarily Victoria and the ACT.</p>
+                    <div class="mt-6 chart-container max-w-2xl mx-auto"><canvas id="locationStatesChart"></canvas></div>
                 </div>
             </div>
         </section>
@@ -765,21 +772,6 @@
                         }]
                     },
                     options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333' } } }
-                });
-
-                allCharts.locationClustersChart = new Chart(document.getElementById('locationClustersChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['Inner Sydney', 'Newcastle', 'Eastern Suburbs', 'Western Sydney'],
-                        datasets: [{
-                            label: 'Percentage',
-                            data: [28, 22, 16, 8],
-                            backgroundColor: [chartColors.amber, chartColors.teal, chartColors.sky, chartColors.rose],
-                            borderColor: Object.values(chartBorderColors),
-                            borderWidth: 1
-                        }]
-                    },
-                    options: { ...defaultChartOptions, indexAxis: 'y', plugins: { datalabels: { anchor: 'end', align: 'start', color: '#333', formatter: (v) => v + '%' } } }
                 });
 
                 allCharts.experienceChart = new Chart(document.getElementById('experienceChart'), {
@@ -1552,6 +1544,15 @@
                                 </div>
                             `);
                             
+                            // Track map marker clicks
+                            marker.on('click', () => {
+                                trackMapInteraction('marker_click', {
+                                    lga_name: lgaName,
+                                    respondent_count: respondentCount,
+                                    state: lgaData.state
+                                });
+                            });
+                            
                             markers.push(marker);
                             marker.addTo(markerGroup);
                         }
@@ -1636,6 +1637,15 @@
                         </div>
                     `);
                     
+                    // Track center marker clicks
+                    centerMarker.on('click', () => {
+                        trackMapInteraction('center_marker_click', {
+                            total_respondents: totalRespondents,
+                            weighted_center_lat: weightedCenterLat.toFixed(4),
+                            weighted_center_lng: weightedCenterLng.toFixed(4)
+                        });
+                    });
+                    
                     centerMarker.addTo(map);
                     
                     // Add layer groups to map
@@ -1712,8 +1722,182 @@
             }
         }
         
+        // Analytics tracking functions
+        function trackEvent(eventName, parameters = {}) {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', eventName, parameters);
+            }
+        }
+        
+        function trackSectionView(sectionName) {
+            trackEvent('section_view', {
+                section_name: sectionName,
+                event_category: 'engagement',
+                event_label: sectionName
+            });
+        }
+        
+        function trackChartInteraction(chartName, interactionType) {
+            trackEvent('chart_interaction', {
+                chart_name: chartName,
+                interaction_type: interactionType,
+                event_category: 'data_visualization',
+                event_label: `${chartName}_${interactionType}`
+            });
+        }
+        
+        function trackPersonaView(personaName) {
+            trackEvent('persona_view', {
+                persona_name: personaName,
+                event_category: 'engagement',
+                event_label: personaName
+            });
+        }
+        
+        function trackMapInteraction(interactionType, details = {}) {
+            trackEvent('map_interaction', {
+                interaction_type: interactionType,
+                event_category: 'geographic_data',
+                event_label: interactionType,
+                ...details
+            });
+        }
+        
+        function trackScrollDepth() {
+            let maxScroll = 0;
+            let scrollTracking = false;
+            
+            window.addEventListener('scroll', () => {
+                if (!scrollTracking) {
+                    scrollTracking = true;
+                    setTimeout(() => {
+                        const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+                        if (scrollPercent > maxScroll) {
+                            maxScroll = scrollPercent;
+                            
+                            // Track at 25%, 50%, 75%, and 100%
+                            if (scrollPercent >= 25 && maxScroll < 50) {
+                                trackEvent('scroll_depth', { depth: '25%', event_category: 'engagement' });
+                            } else if (scrollPercent >= 50 && maxScroll < 75) {
+                                trackEvent('scroll_depth', { depth: '50%', event_category: 'engagement' });
+                            } else if (scrollPercent >= 75 && maxScroll < 100) {
+                                trackEvent('scroll_depth', { depth: '75%', event_category: 'engagement' });
+                            } else if (scrollPercent >= 100) {
+                                trackEvent('scroll_depth', { depth: '100%', event_category: 'engagement' });
+                            }
+                        }
+                        scrollTracking = false;
+                    }, 100);
+                }
+            });
+        }
+        
+        function trackTimeOnPage() {
+            let startTime = Date.now();
+            let timeTracking = false;
+            
+            window.addEventListener('beforeunload', () => {
+                const timeSpent = Math.round((Date.now() - startTime) / 1000);
+                trackEvent('time_on_page', {
+                    time_spent_seconds: timeSpent,
+                    event_category: 'engagement'
+                });
+            });
+        }
+        
+        function trackNavigationClicks() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const sectionName = e.target.getAttribute('href').substring(1);
+                    trackEvent('navigation_click', {
+                        section_name: sectionName,
+                        event_category: 'navigation',
+                        event_label: sectionName
+                    });
+                });
+            });
+        }
+        
+        function trackMobileMenuUsage() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    trackEvent('mobile_menu_toggle', {
+                        event_category: 'navigation',
+                        event_label: 'mobile_menu'
+                    });
+                });
+            }
+        }
+        
+        function trackModalInteractions() {
+            const personaCards = document.querySelectorAll('.persona-card');
+            personaCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const personaName = card.querySelector('h4').textContent;
+                    trackPersonaView(personaName);
+                });
+            });
+            
+            const closeModalButton = document.getElementById('close-modal-button');
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', () => {
+                    trackEvent('modal_close', {
+                        event_category: 'interaction',
+                        event_label: 'persona_modal'
+                    });
+                });
+            }
+        }
+        
+        function trackChartHovers() {
+            // Track when users hover over charts
+            const chartContainers = document.querySelectorAll('.chart-container, .chart-container-small, .chart-container-tall, .chart-container-large');
+            chartContainers.forEach(container => {
+                const canvas = container.querySelector('canvas');
+                if (canvas) {
+                    const chartName = canvas.id.replace('Chart', '');
+                    container.addEventListener('mouseenter', () => {
+                        trackChartInteraction(chartName, 'hover');
+                    });
+                }
+            });
+        }
+        
+        function trackSectionVisibility() {
+            const sections = document.querySelectorAll('section[id]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const sectionName = entry.target.id;
+                        trackSectionView(sectionName);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        }
+        
         // Wait for DOM and scripts to be ready
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize analytics tracking
+            trackScrollDepth();
+            trackTimeOnPage();
+            trackNavigationClicks();
+            trackMobileMenuUsage();
+            trackModalInteractions();
+            trackChartHovers();
+            trackSectionVisibility();
+            
+            // Track initial page load
+            trackEvent('page_view', {
+                page_title: 'NSW Burns Community Survey Results',
+                event_category: 'page_interaction'
+            });
+            
             // Try to initialize immediately
             if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
                 initializeCharts();

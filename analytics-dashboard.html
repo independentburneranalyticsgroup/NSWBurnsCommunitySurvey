@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSW Burns Survey - Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 400px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 1px solid #f59e0b;
+        }
+        .metric-card-blue {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border: 1px solid #3b82f6;
+        }
+        .metric-card-green {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            border: 1px solid #22c55e;
+        }
+        .metric-card-purple {
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            border: 1px solid #a855f7;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-amber-700">Analytics Dashboard</span>
+                    <span class="ml-4 text-sm text-stone-500">NSW Burns Community Survey</span>
+                </div>
+                <div class="text-sm text-stone-500">
+                    <span id="last-updated">Last updated: Loading...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Overview Metrics -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">Overview Metrics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="metric-card p-6 rounded-lg shadow-sm">
+                        <h3 class="text-sm font-medium text-amber-800">Total Page Views</h3>
+                        <p class="text-3xl font-bold text-amber-900" id="total-page-views">-</p>
+                        <p class="text-sm text-amber-700">All time</p>
+                    </div>
+                    <div class="metric-card-blue p-6 rounded-lg shadow-sm">
+                        <h3 class="text-sm font-medium text-blue-800">Unique Visitors</h3>
+                        <p class="text-3xl font-bold text-blue-900" id="unique-visitors">-</p>
+                        <p class="text-sm text-blue-700">Last 30 days</p>
+                    </div>
+                    <div class="metric-card-green p-6 rounded-lg shadow-sm">
+                        <h3 class="text-sm font-medium text-green-800">Avg. Time on Page</h3>
+                        <p class="text-3xl font-bold text-green-900" id="avg-time-on-page">-</p>
+                        <p class="text-sm text-green-700">Minutes</p>
+                    </div>
+                    <div class="metric-card-purple p-6 rounded-lg shadow-sm">
+                        <h3 class="text-sm font-medium text-purple-800">Bounce Rate</h3>
+                        <p class="text-3xl font-bold text-purple-900" id="bounce-rate">-</p>
+                        <p class="text-sm text-purple-700">Percentage</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Engagement -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">Section Engagement</h2>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="chart-container">
+                        <canvas id="sectionEngagementChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Interactions -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">User Interactions</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-stone-800 mb-4">Chart Interactions</h3>
+                        <div class="chart-container">
+                            <canvas id="chartInteractionsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-stone-800 mb-4">Map Interactions</h3>
+                        <div class="chart-container">
+                            <canvas id="mapInteractionsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Persona Engagement -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">Persona Engagement</h2>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="chart-container">
+                        <canvas id="personaEngagementChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scroll Depth Analysis -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">Scroll Depth Analysis</h2>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="chart-container">
+                        <canvas id="scrollDepthChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Device & Browser Analytics -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">Technical Analytics</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-stone-800 mb-4">Device Types</h3>
+                        <div class="chart-container">
+                            <canvas id="deviceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-lg font-semibold text-stone-800 mb-4">Browser Usage</h3>
+                        <div class="chart-container">
+                            <canvas id="browserChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Geographic Analytics -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">Geographic Analytics</h2>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="chart-container">
+                        <canvas id="geographicChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real-time Activity -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-stone-900 mb-6">Real-time Activity</h2>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-stone-800">Live Visitors</h3>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-stone-600">Live</span>
+                        </div>
+                    </div>
+                    <div id="realtime-visitors" class="text-4xl font-bold text-green-600">-</div>
+                    <p class="text-sm text-stone-500 mt-2">Currently viewing the survey report</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Sample data for demonstration - replace with actual GA4 data
+        const sampleData = {
+            overview: {
+                totalPageViews: 1247,
+                uniqueVisitors: 892,
+                avgTimeOnPage: 4.2,
+                bounceRate: 23.5
+            },
+            sectionEngagement: {
+                labels: ['Who We Are', 'Geographic Distribution', 'Culture & Values', 'Our Capabilities', 'Future Preferences', 'Resources & Feedback'],
+                data: [89, 156, 134, 98, 145, 67]
+            },
+            chartInteractions: {
+                labels: ['Age Chart', 'Experience Chart', 'Motivations Chart', 'Skills Chart', 'Travel Chart', 'Pricing Chart'],
+                data: [45, 38, 67, 52, 41, 29]
+            },
+            mapInteractions: {
+                labels: ['Marker Clicks', 'Center Marker', 'Zoom Actions', 'Pan Actions'],
+                data: [234, 89, 156, 203]
+            },
+            personaEngagement: {
+                labels: ['Veteran Community Architect', 'Creative Contributor', 'Community Connector', 'Parent Leaders', 'Engaged Pragmatist'],
+                data: [67, 89, 123, 45, 78]
+            },
+            scrollDepth: {
+                labels: ['25%', '50%', '75%', '100%'],
+                data: [456, 234, 123, 67]
+            },
+            devices: {
+                labels: ['Desktop', 'Mobile', 'Tablet'],
+                data: [567, 345, 89]
+            },
+            browsers: {
+                labels: ['Chrome', 'Safari', 'Firefox', 'Edge', 'Other'],
+                data: [456, 234, 123, 89, 45]
+            },
+            geographic: {
+                labels: ['NSW', 'Victoria', 'QLD', 'WA', 'SA', 'ACT', 'TAS', 'NT'],
+                data: [567, 234, 123, 89, 67, 45, 23, 12]
+            }
+        };
+
+        function initializeDashboard() {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js is not loaded');
+                return;
+            }
+            
+            if (typeof ChartDataLabels === 'undefined') {
+                console.error('ChartDataLabels plugin is not loaded');
+                return;
+            }
+            
+            Chart.register(ChartDataLabels);
+
+            const chartColors = {
+                amber: 'rgba(217, 119, 6, 0.8)',
+                teal: 'rgba(13, 148, 136, 0.8)',
+                sky: 'rgba(2, 132, 199, 0.8)',
+                rose: 'rgba(225, 29, 72, 0.8)',
+                stone: 'rgba(120, 113, 108, 0.8)',
+                green: 'rgba(22, 163, 74, 0.8)',
+                purple: 'rgba(168, 85, 247, 0.8)'
+            };
+
+            const defaultChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        backgroundColor: '#333',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 4
+                    },
+                    datalabels: {
+                        color: '#ffffff',
+                        font: { weight: 'bold' },
+                        formatter: (value) => value
+                    }
+                }
+            };
+
+            // Update overview metrics
+            document.getElementById('total-page-views').textContent = sampleData.overview.totalPageViews.toLocaleString();
+            document.getElementById('unique-visitors').textContent = sampleData.overview.uniqueVisitors.toLocaleString();
+            document.getElementById('avg-time-on-page').textContent = sampleData.overview.avgTimeOnPage;
+            document.getElementById('bounce-rate').textContent = sampleData.overview.bounceRate + '%';
+
+            // Section Engagement Chart
+            new Chart(document.getElementById('sectionEngagementChart'), {
+                type: 'bar',
+                data: {
+                    labels: sampleData.sectionEngagement.labels,
+                    datasets: [{
+                        label: 'Views',
+                        data: sampleData.sectionEngagement.data,
+                        backgroundColor: chartColors.amber,
+                        borderColor: 'rgb(217, 119, 6)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...defaultChartOptions,
+                    indexAxis: 'y',
+                    plugins: {
+                        ...defaultChartOptions.plugins,
+                        datalabels: { anchor: 'end', align: 'end', color: '#333' }
+                    }
+                }
+            });
+
+            // Chart Interactions Chart
+            new Chart(document.getElementById('chartInteractionsChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: sampleData.chartInteractions.labels,
+                    datasets: [{
+                        data: sampleData.chartInteractions.data,
+                        backgroundColor: Object.values(chartColors),
+                        borderColor: '#F8F7F4',
+                        borderWidth: 4
+                    }]
+                },
+                options: defaultChartOptions
+            });
+
+            // Map Interactions Chart
+            new Chart(document.getElementById('mapInteractionsChart'), {
+                type: 'bar',
+                data: {
+                    labels: sampleData.mapInteractions.labels,
+                    datasets: [{
+                        label: 'Interactions',
+                        data: sampleData.mapInteractions.data,
+                        backgroundColor: chartColors.sky,
+                        borderColor: 'rgb(2, 132, 199)',
+                        borderWidth: 1
+                    }]
+                },
+                options: defaultChartOptions
+            });
+
+            // Persona Engagement Chart
+            new Chart(document.getElementById('personaEngagementChart'), {
+                type: 'bar',
+                data: {
+                    labels: sampleData.personaEngagement.labels,
+                    datasets: [{
+                        label: 'Views',
+                        data: sampleData.personaEngagement.data,
+                        backgroundColor: chartColors.teal,
+                        borderColor: 'rgb(13, 148, 136)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...defaultChartOptions,
+                    indexAxis: 'y',
+                    plugins: {
+                        ...defaultChartOptions.plugins,
+                        datalabels: { anchor: 'end', align: 'end', color: '#333' }
+                    }
+                }
+            });
+
+            // Scroll Depth Chart
+            new Chart(document.getElementById('scrollDepthChart'), {
+                type: 'line',
+                data: {
+                    labels: sampleData.scrollDepth.labels,
+                    datasets: [{
+                        label: 'Users',
+                        data: sampleData.scrollDepth.data,
+                        borderColor: chartColors.green,
+                        backgroundColor: chartColors.green,
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    ...defaultChartOptions,
+                    plugins: {
+                        ...defaultChartOptions.plugins,
+                        datalabels: { display: false }
+                    }
+                }
+            });
+
+            // Device Chart
+            new Chart(document.getElementById('deviceChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: sampleData.devices.labels,
+                    datasets: [{
+                        data: sampleData.devices.data,
+                        backgroundColor: [chartColors.amber, chartColors.sky, chartColors.teal],
+                        borderColor: '#F8F7F4',
+                        borderWidth: 4
+                    }]
+                },
+                options: defaultChartOptions
+            });
+
+            // Browser Chart
+            new Chart(document.getElementById('browserChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: sampleData.browsers.labels,
+                    datasets: [{
+                        data: sampleData.browsers.data,
+                        backgroundColor: [chartColors.rose, chartColors.purple, chartColors.amber, chartColors.sky, chartColors.stone],
+                        borderColor: '#F8F7F4',
+                        borderWidth: 4
+                    }]
+                },
+                options: defaultChartOptions
+            });
+
+            // Geographic Chart
+            new Chart(document.getElementById('geographicChart'), {
+                type: 'bar',
+                data: {
+                    labels: sampleData.geographic.labels,
+                    datasets: [{
+                        label: 'Visitors',
+                        data: sampleData.geographic.data,
+                        backgroundColor: chartColors.purple,
+                        borderColor: 'rgb(168, 85, 247)',
+                        borderWidth: 1
+                    }]
+                },
+                options: defaultChartOptions
+            });
+
+            // Simulate real-time visitors
+            let realtimeCount = Math.floor(Math.random() * 20) + 5;
+            document.getElementById('realtime-visitors').textContent = realtimeCount;
+            
+            setInterval(() => {
+                realtimeCount += Math.floor(Math.random() * 3) - 1;
+                realtimeCount = Math.max(0, realtimeCount);
+                document.getElementById('realtime-visitors').textContent = realtimeCount;
+            }, 5000);
+
+            // Update last updated time
+            document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleString();
+        }
+
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+                    initializeDashboard();
+                } else {
+                    console.error('Chart.js or ChartDataLabels failed to load');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html> 
